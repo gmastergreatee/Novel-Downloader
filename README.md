@@ -4,6 +4,7 @@
 
 Windows only
 
+Download from [appveyor](https://ci.appveyor.com/project/gmastergreatee/novel-downloader)
 
 |Supported Sites|Status|
 |-----|------|
