@@ -4,7 +4,7 @@
 
 Windows only
 
-Download from [appveyor](https://ci.appveyor.com/project/gmastergreatee/novel-downloader)
+Download from [appveyor](https://ci.appveyor.com/project/gmastergreatee/novel-downloader/build/artifacts)
 
 |Supported Sites|Status|
 |-----|------|
