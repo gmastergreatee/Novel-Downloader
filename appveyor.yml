@@ -1,6 +1,8 @@
+configuration: Release
+
 after_build:
   - 7z a Novel-Downloader.zip C:\projects\novel-downloader\Novel-Downloader\bin\Debug\Novel-Downloader.exe C:\projects\novel-downloader\Novel-Downloader\bin\Debug\VersOne.Epub.dll
 
 artifacts:
-  - path: \bin\Debug\Novel-Downloader.zip
+  - path: Novel-Downloader\bin\Debug\Novel-Downloader.zip
     name: NovelDownloader
