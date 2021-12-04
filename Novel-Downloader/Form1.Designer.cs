@@ -175,7 +175,7 @@
             this.txtFolderPath.Name = "txtFolderPath";
             this.txtFolderPath.Size = new System.Drawing.Size(296, 26);
             this.txtFolderPath.TabIndex = 3;
-            this.txtFolderPath.Text = "\\Novels\\world-hopping-harem-system";
+            this.txtFolderPath.Text = "\\Novels\\one-piece-the-legend-of-johnny-silverhand";
             // 
             // label5
             // 
@@ -231,7 +231,8 @@
             this.txtURL.Name = "txtURL";
             this.txtURL.Size = new System.Drawing.Size(296, 26);
             this.txtURL.TabIndex = 1;
-            this.txtURL.Text = "https://www.webnovel.com/book/world-hopping-harem-system_15600850706167605";
+            this.txtURL.Text = "https://www.webnovel.com/book/one-piece-the-legend-of-johnny-silverhand_207157621" +
+    "06259605";
             // 
             // tableLayoutPanel3
             // 
