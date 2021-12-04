@@ -1,6 +1,6 @@
 after_build:
-  - 7z a Novel-Downloader.zip \Novel-Downloader\Novel-Downloader\bin\Release\Novel-Downloader.exe \Novel-Downloader\Novel-Downloader\bin\Release\VersOne.Epub.dll \Novel-Downloader\Novel-Downloader\bin\Release\System.IO.Compression.dll
+  - 7z a Novel-Downloader.zip C:\projects\novel-downloader\Novel-Downloader\bin\Debug\Novel-Downloader.exe C:\projects\novel-downloader\Novel-Downloader\bin\Debug\VersOne.Epub.dll C:\projects\novel-downloader\Novel-Downloader\bin\Debug\System.IO.Compression.dll
 
 artifacts:
-  - path: \Novel-Downloader\Novel-Downloader\bin\Release\Novel-Downloader.zip
+  - path: C:\projects\novel-downloader\Novel-Downloader\bin\Debug\Novel-Downloader.zip
     name: NovelDownloader
