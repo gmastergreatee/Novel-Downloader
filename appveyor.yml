@@ -5,4 +5,4 @@ after_build:
 
 artifacts:
   - path: Novel-Downloader.zip
-    name: NovelDownloader
+    name: Release
