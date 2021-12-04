@@ -4,4 +4,7 @@
 
 Windows only
 
-Download novels from WebNovel.com
+
+|Supported Sites|Status|
+|-----|------|
+|WebNovel.com|In develoopment|
