@@ -41,7 +41,14 @@ namespace Novel_Downloader.Downloaders
         {
             new Task(() =>
             {
-                OnNovelInfoFetchSuccess?.Invoke(this, new NovelInfo());
+                OnNovelInfoFetchSuccess?.Invoke(this, new NovelInfo()
+                {
+                    NovelUrl = novelUrl,
+                    ImageUrl = "",
+                    Title = "NA",
+                    Author = "NA",
+                    ChapterCount = 0,
+                });
             }).Start();
         }
 

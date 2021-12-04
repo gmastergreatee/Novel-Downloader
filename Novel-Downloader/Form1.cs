@@ -39,6 +39,31 @@ namespace Novel_Downloader
 
         #region Downloader Events
 
+        // ------------------------------- Novel Information
+
+        private void OnNovelInfoFetchSuccess(object sender, NovelInfo novelInfo)
+        {
+            NovelURL = novelInfo.NovelUrl;
+            Invoke(new Action(() =>
+            {
+                if (!string.IsNullOrWhiteSpace(novelInfo.ImageUrl))
+                    pictureBox1.ImageLocation = novelInfo.ImageUrl;
+
+                lblTitle.Text = novelInfo.Title;
+                lblAuthor.Text = novelInfo.Author;
+                lblChapterCount.Text = novelInfo.ChapterCount.ToString();
+
+                progDownload.Value = 0;
+                progDownload.Maximum = novelInfo.ChapterCount;
+                txtConsole.AppendText("---------- Novel Found ----------" + Environment.NewLine);
+                txtConsole.AppendText("Title : " + novelInfo.Title + Environment.NewLine);
+                txtConsole.AppendText("Author : " + novelInfo.Author + Environment.NewLine);
+                txtConsole.AppendText(novelInfo.ChapterCount + " chapters found" + Environment.NewLine);
+
+                UnlockControls(novelInfo.ChapterCount > 0);
+            }));
+        }
+
         private void OnNovelInfoFetchError(object sender, Exception e)
         {
             Invoke(new Action(() =>
@@ -47,6 +72,8 @@ namespace Novel_Downloader
                 UnlockControls();
             }));
         }
+
+        // ------------------------------- Chapter List
 
         private void OnChapterListFetchSuccess(object sender, List<ChapterInfo> e)
         {
@@ -65,7 +92,9 @@ namespace Novel_Downloader
             }));
         }
 
-        private void OnChapterDataFetchError(object sender, ChapterDataFetchError e)
+        // ------------------------------- Chapter Data
+
+        private void OnChapterDataFetchSuccess(object sender, ChapterData e)
         {
             Invoke(new Action(() =>
             {
@@ -73,7 +102,7 @@ namespace Novel_Downloader
             }));
         }
 
-        private void OnChapterDataFetchSuccess(object sender, ChapterData e)
+        private void OnChapterDataFetchError(object sender, ChapterDataFetchError e)
         {
             Invoke(new Action(() =>
             {
@@ -110,29 +139,6 @@ namespace Novel_Downloader
 
             txtConsole.AppendText("Getting Novel Information..." + Environment.NewLine);
             currentDownloader.GetNovelInfoAsync(novelUrl);
-        }
-
-        private void OnNovelInfoFetchSuccess(object sender, NovelInfo novelInfo)
-        {
-            NovelURL = novelInfo.NovelUrl;
-            Invoke(new Action(() =>
-            {
-                if (!string.IsNullOrWhiteSpace(novelInfo.ImageUrl))
-                    pictureBox1.ImageLocation = novelInfo.ImageUrl;
-
-                lblTitle.Text = novelInfo.Title;
-                lblAuthor.Text = novelInfo.Author;
-                lblChapterCount.Text = novelInfo.ChapterCount.ToString();
-
-                progDownload.Value = 0;
-                progDownload.Maximum = novelInfo.ChapterCount;
-                txtConsole.AppendText("---------- Novel Found ----------" + Environment.NewLine);
-                txtConsole.AppendText("Title : " + novelInfo.Title + Environment.NewLine);
-                txtConsole.AppendText("Author : " + novelInfo.Author + Environment.NewLine);
-                txtConsole.AppendText(novelInfo.ChapterCount + " chapters found" + Environment.NewLine);
-
-                UnlockControls();
-            }));
         }
 
         private void btnSelectFolder_Click(object sender, EventArgs e)
