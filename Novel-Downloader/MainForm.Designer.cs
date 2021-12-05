@@ -472,6 +472,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(949, 596);
             this.Controls.Add(this.tabControl1);
+            this.MinimumSize = new System.Drawing.Size(967, 643);
             this.Name = "MainForm";
             this.Text = "Novel-Downloader";
             this.SizeChanged += new System.EventHandler(this.MainForm_SizeChanged);

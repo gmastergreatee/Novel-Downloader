@@ -1,19 +1,20 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using AngleSharp;
 using System.Text;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Novel_Downloader.Models;
 using System.Collections.Generic;
-using CsQuery;
 
 namespace Novel_Downloader.Downloaders
 {
     public class Webnovel : IDownloader
     {
         string csrfToken = "";
+        NovelInfo novelInfo = null;
 
         public Webnovel()
         {
@@ -41,7 +42,7 @@ namespace Novel_Downloader.Downloaders
 
         public void GetNovelInfoAsync(string novelUrl)
         {
-            new Task(() =>
+            new Task(async () =>
             {
                 try
                 {
@@ -65,14 +66,14 @@ namespace Novel_Downloader.Downloaders
                     }
                     #endregion
 
-                    CQ dom = html;
+                    var dom = await BrowsingContext.New(Configuration.Default).OpenAsync(r => r.Content(html));
 
                     var retThis = new NovelInfo();
 
                     #region Get Image URL
                     try
                     {
-                        var imageObj = dom["head meta[property='og:image']"].FirstOrDefault();
+                        var imageObj = dom.QuerySelectorAll("head meta[property='og:image']").FirstOrDefault();
                         if (imageObj != null)
                         {
                             var imgUrl = imageObj.GetAttribute("content");
@@ -85,10 +86,10 @@ namespace Novel_Downloader.Downloaders
 
                     #region Get Title and Author
 
-                    var titleObj = dom["head title"].FirstOrDefault();
+                    var titleObj = dom.QuerySelectorAll("head title").FirstOrDefault();
                     if (titleObj != null)
                     {
-                        var stuff = titleObj.InnerText.Trim().Split('-');
+                        var stuff = titleObj.TextContent.Trim().Split('-');
                         retThis.Title = stuff[0].Trim().Substring(5);
                         retThis.Author = stuff[1].Trim();
                     }
@@ -99,7 +100,7 @@ namespace Novel_Downloader.Downloaders
 
                     #region Get UniqueId & NovelUrl
 
-                    var uIdObj = dom["head meta[property='og:url']"].FirstOrDefault();
+                    var uIdObj = dom.QuerySelectorAll("head meta[property='og:url']").FirstOrDefault();
                     if (uIdObj != null)
                     {
                         var url = uIdObj.GetAttribute("content");
@@ -115,16 +116,18 @@ namespace Novel_Downloader.Downloaders
 
                     #region Get Chapter Count
 
-                    var chapObj = dom["body [data-report-bid=" + retThis.UniqueId + "]:first "].FirstOrDefault();
+                    var chapObj = dom.QuerySelectorAll("body [data-report-bid=" + retThis.UniqueId + "]").FirstOrDefault();
                     if (chapObj == null)
                         throw new Exception("Error getting chapter count");
-                    chapObj = ((CQ)chapObj.ParentNode.InnerHTML)["strong:first span"].FirstOrDefault();
+                    chapObj = chapObj.ParentElement.QuerySelectorAll("strong span").FirstOrDefault();
                     if (chapObj == null)
                         throw new Exception("Error getting chapter count -> 2");
-                    var chapterText = chapObj.InnerText.Trim();
+                    var chapterText = chapObj.TextContent.Trim();
                     retThis.ChapterCount = Convert.ToInt32(chapterText.Substring(0, chapterText.IndexOf(" ")));
 
                     #endregion
+
+                    novelInfo = retThis.Copy();
 
                     OnNovelInfoFetchSuccess?.Invoke(this, retThis);
                 }
@@ -138,6 +141,7 @@ namespace Novel_Downloader.Downloaders
         public void ResetClient()
         {
             csrfToken = "";
+            novelInfo = null;
         }
 
         public bool UrlMatch(string novelUrl)

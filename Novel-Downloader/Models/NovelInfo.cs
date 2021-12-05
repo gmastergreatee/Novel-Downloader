@@ -14,5 +14,18 @@ namespace Novel_Downloader.Models
         public string Title { get; set; }
         public string Author { get; set; }
         public int ChapterCount { get; set; }
+
+        public NovelInfo Copy()
+        {
+            return new NovelInfo()
+            {
+                UniqueId = UniqueId,
+                NovelUrl = NovelUrl,
+                ImageUrl = ImageUrl,
+                Title = Title,
+                Author = Author,
+                ChapterCount = ChapterCount,
+            };
+        }
     }
 }
