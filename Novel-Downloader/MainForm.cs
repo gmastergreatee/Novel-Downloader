@@ -136,6 +136,8 @@ namespace Novel_Downloader
                 txtConsole.AppendText("Oops! No matching downloaders found." + Environment.NewLine);
                 return;
             }
+            // reset client to remove old data
+            currentDownloader.ResetClient();
 
             txtConsole.AppendText("Getting Novel Information..." + Environment.NewLine);
             currentDownloader.FetchNovelInfo(novelUrl);
