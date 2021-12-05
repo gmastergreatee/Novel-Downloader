@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace Novel_Downloader
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         #region vars
 
@@ -31,7 +31,7 @@ namespace Novel_Downloader
 
         #endregion
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
             ExtraInit();
@@ -56,9 +56,9 @@ namespace Novel_Downloader
                 progDownload.Value = 0;
                 progDownload.Maximum = novelInfo.ChapterCount;
                 txtConsole.AppendText("---------- Novel Found ----------" + Environment.NewLine);
-                txtConsole.AppendText("Title : " + novelInfo.Title + Environment.NewLine);
-                txtConsole.AppendText("Author : " + novelInfo.Author + Environment.NewLine);
-                txtConsole.AppendText(novelInfo.ChapterCount + " chapters found" + Environment.NewLine);
+                txtConsole.AppendText("Title\t\t: " + novelInfo.Title + Environment.NewLine);
+                txtConsole.AppendText("Author\t\t: " + novelInfo.Author + Environment.NewLine);
+                txtConsole.AppendText("Chapters\t: " + novelInfo.ChapterCount + Environment.NewLine);
 
                 UnlockControls(novelInfo.ChapterCount > 0);
             }));
@@ -155,6 +155,16 @@ namespace Novel_Downloader
             // ...
         }
 
+        private void MainForm_SizeChanged(object sender, EventArgs e)
+        {
+            FixImageHeight();
+        }
+
+        private void ImageLoaded(object sender, AsyncCompletedEventArgs e)
+        {
+            FixImageHeight();
+        }
+
         #endregion
 
         #region Helper Methods
@@ -175,6 +185,8 @@ namespace Novel_Downloader
 
             folderBrowserDialog1.Description = "Select the folder where novel-data will be downloaded";
             folderBrowserDialog1.ShowNewFolderButton = true;
+
+            pictureBox1.LoadCompleted += ImageLoaded;
         }
 
         string ParseExceptionMessage(Exception ex)
@@ -202,6 +214,16 @@ namespace Novel_Downloader
             chapterDatas = new List<ChapterData>();
         }
 
+        void FixImageHeight()
+        {
+            if (pictureBox1.Image != null)
+            {
+                var img = pictureBox1.Image;
+                var targetHeight = (int)((img.Height / (double)img.Width) * pictureBox1.Width);
+                pictureBox1.Height = Math.Min(targetHeight, 200);
+            }
+        }
+
         void LockControls()
         {
             btnCheck.Enabled = false;
@@ -224,5 +246,6 @@ namespace Novel_Downloader
         }
 
         #endregion
+
     }
 }
