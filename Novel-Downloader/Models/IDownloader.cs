@@ -15,9 +15,9 @@ namespace Novel_Downloader.Models
         event EventHandler<ChapterDataFetchError> OnChapterDataFetchError;
 
         bool UrlMatch(string novelUrl);
-        void GetNovelInfoAsync(string novelUrl);
-        IEnumerable<ChapterInfo> GetChapterList(string novelUrl);
-        ChapterData GetChapterData(string chapterUrl);
+        void FetchNovelInfo(string novelUrl);
+        void FetchChapterList();
+        void FetchChapterData(ChapterInfo chapterInfo);
         void ResetClient();
     }
 }

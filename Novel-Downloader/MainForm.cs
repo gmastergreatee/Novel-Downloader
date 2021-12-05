@@ -138,7 +138,7 @@ namespace Novel_Downloader
             }
 
             txtConsole.AppendText("Getting Novel Information..." + Environment.NewLine);
-            currentDownloader.GetNovelInfoAsync(novelUrl);
+            currentDownloader.FetchNovelInfo(novelUrl);
         }
 
         private void btnSelectFolder_Click(object sender, EventArgs e)

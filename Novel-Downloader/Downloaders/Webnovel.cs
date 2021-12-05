@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Novel_Downloader.Models;
 using System.Collections.Generic;
+using AngleSharp.Dom;
 
 namespace Novel_Downloader.Downloaders
 {
@@ -30,17 +31,21 @@ namespace Novel_Downloader.Downloaders
         public event EventHandler<ChapterData> OnChapterDataFetchSuccess;
         public event EventHandler<ChapterDataFetchError> OnChapterDataFetchError;
 
-        public ChapterData GetChapterData(string chapterUrl)
+        public void FetchChapterData(ChapterInfo chapterInfo)
         {
+            OnChapterDataFetchSuccess(this, null);
+            OnChapterDataFetchError(this, null);
             throw new NotImplementedException();
         }
 
-        public IEnumerable<ChapterInfo> GetChapterList(string novelUrl)
+        public void FetchChapterList()
         {
+            OnChapterListFetchSuccess(this, null);
+            OnChapterListFetchError(this, null);
             throw new NotImplementedException();
         }
 
-        public void GetNovelInfoAsync(string novelUrl)
+        public void FetchNovelInfo(string novelUrl)
         {
             new Task(async () =>
             {
@@ -85,43 +90,85 @@ namespace Novel_Downloader.Downloaders
                     #endregion
 
                     #region Get Title and Author
-
-                    var titleObj = dom.QuerySelectorAll("head title").FirstOrDefault();
-                    if (titleObj != null)
+                    IElement titleObj = null;
+                    try
                     {
-                        var stuff = titleObj.TextContent.Trim().Split('-');
-                        retThis.Title = stuff[0].Trim().Substring(5);
-                        retThis.Author = stuff[1].Trim();
+                        titleObj = dom.QuerySelectorAll("head title").FirstOrDefault();
                     }
-                    else
-                        throw new Exception("Can't get Novel-Title & Author Info");
+                    catch
+                    {
+                        throw new Exception("Can't get Novel-Title & Author Info, please check the URL entered");
+                    }
+
+                    string[] stuff = null;
+
+                    try
+                    {
+                        stuff = titleObj.TextContent.Trim().Split('-');
+                    }
+                    catch
+                    {
+                        throw new Exception("Can't get Novel-Title & Author Info, please check the URL entered -> ECODE 2");
+                    }
+
+                    if (stuff.Length != 3)
+                        throw new Exception("Can't get Novel-Title & Author Info, please check the URL entered -> ECODE 3");
+                    retThis.Title = stuff[0].Trim().Substring(5);
+                    retThis.Author = stuff[1].Trim();
 
                     #endregion
 
                     #region Get UniqueId & NovelUrl
-
-                    var uIdObj = dom.QuerySelectorAll("head meta[property='og:url']").FirstOrDefault();
-                    if (uIdObj != null)
+                    IElement uIdObj = null;
+                    try
                     {
-                        var url = uIdObj.GetAttribute("content");
-                        if (!string.IsNullOrWhiteSpace(url))
-                        {
-                            retThis.NovelUrl = url;
-                            retThis.UniqueId = url.Substring(url.LastIndexOf("_") + 1);
-                        }
-                        else throw new Exception("Error fetching UniqueId");
+                        uIdObj = dom.QuerySelectorAll("head meta[property='og:url']").FirstOrDefault();
                     }
+                    catch
+                    {
+                        throw new Exception("Error fetching NovelURL & UniqueId");
+                    }
+
+                    string url = "";
+                    try
+                    {
+                        url = uIdObj.GetAttribute("content");
+                    }
+                    catch
+                    {
+                        throw new Exception("Can't get Novel URL");
+                    }
+
+                    if (string.IsNullOrWhiteSpace(url))
+                        throw new Exception("Error fetching UniqueId");
+
+                    retThis.NovelUrl = url;
+                    retThis.UniqueId = url.Substring(url.LastIndexOf("_") + 1);
 
                     #endregion
 
                     #region Get Chapter Count
-
-                    var chapObj = dom.QuerySelectorAll("body [data-report-bid=" + retThis.UniqueId + "]").FirstOrDefault();
-                    if (chapObj == null)
+                    IElement chapObj = null;
+                    // -- finding element close to chapter count
+                    try
+                    {
+                        chapObj = dom.QuerySelectorAll("body [data-report-bid=" + retThis.UniqueId + "]").FirstOrDefault();
+                    }
+                    catch
+                    {
                         throw new Exception("Error getting chapter count");
-                    chapObj = chapObj.ParentElement.QuerySelectorAll("strong span").FirstOrDefault();
-                    if (chapObj == null)
-                        throw new Exception("Error getting chapter count -> 2");
+                    }
+
+                    // -- navigating to chapter count text
+                    try
+                    {
+                        chapObj = chapObj.ParentElement.QuerySelectorAll("strong span").FirstOrDefault();
+                    }
+                    catch
+                    {
+                        throw new Exception("Error getting chapter count -> ECODE 2");
+                    }
+
                     var chapterText = chapObj.TextContent.Trim();
                     retThis.ChapterCount = Convert.ToInt32(chapterText.Substring(0, chapterText.IndexOf(" ")));
 
