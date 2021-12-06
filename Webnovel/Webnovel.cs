@@ -8,6 +8,7 @@ using AngleSharp.Dom;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using EpubSharp;
 
 namespace Webnovel
 {
@@ -260,9 +261,69 @@ namespace Webnovel
             return novelUrl.ToLower().StartsWith("https://www.webnovel.com/book/");
         }
 
-        public void GenerateEPUB(string targetPath)
+        public void GenerateDocument(string targetPath)
         {
-            throw new NotImplementedException();
+            OnLog?.Invoke(this, "Generating EPUB file...");
+
+            var epubFileName = novelInfo.Author + " - " + novelInfo.Title + ".epub";
+            var invalidPathChars = Path.GetInvalidFileNameChars().Union(Path.GetInvalidPathChars()).ToList();
+            foreach (var ch in invalidPathChars)
+            {
+                epubFileName = epubFileName.Replace(ch.ToString(), "");
+            }
+            var epubFilePath = Path.Combine(targetPath, epubFileName);
+
+            EpubWriter writer;
+            if (File.Exists(epubFilePath))
+            {
+                try
+                {
+                    writer = new EpubWriter(EpubReader.Read(epubFilePath));
+                }
+                catch
+                {
+                    OnLog?.Invoke(this, "Error loading existing epub file");
+                    return;
+                }
+            }
+            else
+                writer = new EpubWriter();
+
+            writer.ClearAuthors();
+            writer.AddAuthor(novelInfo.Author);
+            writer.SetTitle(novelInfo.Author + " - " + novelInfo.Title);
+            if (File.Exists(Path.Combine(targetPath, "data", "image.png")))
+            {
+                writer.SetCover(File.ReadAllBytes(Path.Combine(targetPath, "data", "image.jpg")), ImageFormat.Jpeg);
+            }
+            writer.ClearChapters();
+
+            writer.AddFile("style.css", "pirate{display:none}", EpubSharp.Format.EpubContentType.Css);
+            var cssInclude = "<link rel=\"stylesheet\" href=\"style.css\" >";
+
+            var count = 1;
+            foreach (var itm in bookInfoResp.data.volumeItems)
+            {
+                if (!string.IsNullOrWhiteSpace(itm.volumeName))
+                {
+                    writer.AddChapter(
+                        itm.volumeName,
+                        cssInclude + "<div style=\"margin-top:50px;text-align:center\">VOLUME : " + itm.volumeName + "</div>"
+                    );
+                }
+
+                foreach (var itm2 in itm.chapterItems)
+                {
+                    writer.AddChapter(
+                        count.ToString() + ". " + itm2.chapterName,
+                        cssInclude + itm2.content.Replace("\r\n", "<br>").Replace("\n", "<br>")
+                    );
+                    count++;
+                }
+            }
+
+            writer.Write(epubFilePath);
+            OnLog?.Invoke(this, "File saved to \"" + epubFilePath + "\"");
         }
     }
 }

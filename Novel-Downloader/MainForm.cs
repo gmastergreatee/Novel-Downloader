@@ -84,6 +84,11 @@ namespace Novel_Downloader
 
         private void OnChapterListFetchSuccess(object sender, List<ChapterInfo> e)
         {
+            Invoke(new Action(() =>
+            {
+                progDownload.Maximum = e.Count;
+            }));
+
             chapterInfos = e.ToList();
             var chapterInfosToDownload = e.ToList();
             new Task(() =>
@@ -91,13 +96,13 @@ namespace Novel_Downloader
                 if (pictureBox1.Image != null)
                 {
                     OnLog(sender, "Saving image...");
-                    pictureBox1.Image.Save(Path.Combine(TargetPath, "image.png"));
+                    pictureBox1.Image.Save(Path.Combine(TargetPath, "data", "image.jpg"));
                 }
 
                 OnLog(sender, "Saving novel-info...");
                 try
                 {
-                    File.WriteAllText(Path.Combine(TargetPath, "info.json"), JsonConvert.SerializeObject(novelInfo));
+                    File.WriteAllText(Path.Combine(TargetPath, "data", "info.json"), JsonConvert.SerializeObject(novelInfo));
                 }
                 catch
                 {
@@ -109,7 +114,7 @@ namespace Novel_Downloader
                 OnLog(sender, "Saving chapter-list...");
                 try
                 {
-                    File.WriteAllText(Path.Combine(TargetPath, "list.json"), JsonConvert.SerializeObject(chapterInfos));
+                    File.WriteAllText(Path.Combine(TargetPath, "data", "list.json"), JsonConvert.SerializeObject(chapterInfos));
                 }
                 catch
                 {
@@ -146,7 +151,7 @@ namespace Novel_Downloader
                     {
                         Invoke(new Action(() =>
                         {
-                            if (MessageBox.Show(chapterInfosToDownload.Count + " chapters weren't downloaded. Do you want to retry ?", "Query", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                            if (MessageBox.Show(chapterInfosToDownload.Count + " chapter/s weren't downloaded. Do you want to retry ?", "Query", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
                             {
                                 forceBreak = true;
                             }
@@ -167,7 +172,7 @@ namespace Novel_Downloader
 
                 OnLog(sender, (count - 1) + " chapters fetched");
 
-                OnLog(sender, "{DEVELOPER_PROMPT} -> CODE TO GENERATE EPUB HERE");
+                currentDownloader.GenerateDocument(TargetPath);
 
                 Invoke(new Action(() =>
                 {
@@ -192,8 +197,13 @@ namespace Novel_Downloader
         {
             try
             {
-                File.WriteAllText(Path.Combine(TargetPath, e.Index + ".json"), JsonConvert.SerializeObject(e));
+                File.WriteAllText(Path.Combine(TargetPath, "data", e.Index + ".json"), JsonConvert.SerializeObject(e));
                 chapterDatas.Add(e);
+
+                Invoke(new Action(() =>
+                {
+                    progDownload.Value = chapterDatas.Count;
+                }));
             }
             catch
             {
@@ -252,6 +262,7 @@ namespace Novel_Downloader
 
         private void btnGrabChapters_Click(object sender, EventArgs e)
         {
+            ResetURLWorkspace(true);
             SetTargetPath();
             if (string.IsNullOrWhiteSpace(TargetPath))
                 return;
@@ -285,6 +296,8 @@ namespace Novel_Downloader
 
         void ExtraInit()
         {
+            txtURL.Text = "https://www.webnovel.com/book/dc's-ghost_20461293705507605";
+
             foreach (var itm in downloaders)
             {
                 itm.OnLog += OnLog;
@@ -317,16 +330,19 @@ namespace Novel_Downloader
             return message;
         }
 
-        void ResetURLWorkspace()
+        void ResetURLWorkspace(bool partialReset = false)
         {
-            txtConsole.Clear();
-            currentDownloader = null;
-            novelInfo = null;
-            TargetPath = "";
-            lblTitle.Text = "NA";
-            lblAuthor.Text = "NA";
-            lblChapterCount.Text = "NA";
-            btnGrabChapters.Enabled = false;
+            if (!partialReset)
+            {
+                txtConsole.Clear();
+                currentDownloader = null;
+                novelInfo = null;
+                TargetPath = "";
+                lblTitle.Text = "NA";
+                lblAuthor.Text = "NA";
+                lblChapterCount.Text = "NA";
+                btnGrabChapters.Enabled = false;
+            }
             chapterInfos = new List<ChapterInfo>();
             errorChapterInfos = new List<ChapterInfo>();
             chapterDatas = new List<ChapterData>();
@@ -389,6 +405,8 @@ namespace Novel_Downloader
                 path = Path.Combine(path, novelFolderName);
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
+                if (!Directory.Exists(Path.Combine(path, "data")))
+                    Directory.CreateDirectory(Path.Combine(path, "data"));
             }
             catch
             {

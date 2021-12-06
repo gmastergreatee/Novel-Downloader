@@ -34,6 +34,9 @@
     <Reference Include="AngleSharp, Version=0.16.1.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
       <HintPath>..\packages\AngleSharp.0.16.1\lib\net461\AngleSharp.dll</HintPath>
     </Reference>
+    <Reference Include="EpubSharp, Version=1.1.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EpubSharp.dll.1.1.5\lib\net451\EpubSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -75,6 +78,9 @@
       <Project>{b5dcec59-3c45-415d-872f-11ee791d141f}</Project>
       <Name>Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
