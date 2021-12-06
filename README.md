@@ -9,3 +9,4 @@ Download from [appveyor](https://ci.appveyor.com/project/gmastergreatee/novel-do
 |Supported Sites|Status|
 |-----|------|
 |WebNovel.com|Done|
+|FanFiction.net|In progress|
