@@ -39,6 +39,14 @@ namespace Novel_Downloader
 
         #region Downloader Events
 
+        private void OnLog(object sender, string e)
+        {
+            Invoke(new Action(() =>
+            {
+                txtConsole.AppendText(e + Environment.NewLine);
+            }));
+        }
+
         // ------------------------------- Novel Information
 
         private void OnNovelInfoFetchSuccess(object sender, NovelInfo novelInfo)
@@ -153,8 +161,12 @@ namespace Novel_Downloader
 
         private void btnGrabChapters_Click(object sender, EventArgs e)
         {
+            txtConsole.AppendText("Downloading..." + Environment.NewLine);
             LockControls();
-            // ...
+            new Task(() =>
+            {
+                currentDownloader.FetchChapterList();
+            }).Start();
         }
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
@@ -175,6 +187,8 @@ namespace Novel_Downloader
         {
             foreach (var itm in downloaders)
             {
+                itm.OnLog += OnLog;
+
                 itm.OnNovelInfoFetchSuccess += OnNovelInfoFetchSuccess;
                 itm.OnNovelInfoFetchError += OnNovelInfoFetchError;
 
@@ -205,6 +219,7 @@ namespace Novel_Downloader
 
         void ResetURLWorkspace()
         {
+            txtConsole.Clear();
             currentDownloader = null;
             NovelURL = "";
             lblTitle.Text = "NA";

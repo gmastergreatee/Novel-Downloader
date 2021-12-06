@@ -9,18 +9,23 @@ using System.Threading.Tasks;
 using Novel_Downloader.Models;
 using System.Collections.Generic;
 using AngleSharp.Dom;
+using Newtonsoft.Json;
 
 namespace Novel_Downloader.Downloaders
 {
     public class Webnovel : IDownloader
     {
+        string uuid = "";
         string csrfToken = "";
         NovelInfo novelInfo = null;
+        Models.Webnovel.BookInfoResponse.BookInfoResponse bookInfoResp = null;
 
         public Webnovel()
         {
             ResetClient();
         }
+
+        public event EventHandler<string> OnLog;
 
         public event EventHandler<NovelInfo> OnNovelInfoFetchSuccess;
         public event EventHandler<Exception> OnNovelInfoFetchError;
@@ -33,16 +38,86 @@ namespace Novel_Downloader.Downloaders
 
         public void FetchChapterData(ChapterInfo chapterInfo)
         {
-            OnChapterDataFetchSuccess(this, null);
-            OnChapterDataFetchError(this, null);
-            throw new NotImplementedException();
+            var chapterData = new ChapterData();
+
+            try
+            {
+                var html = "";
+                try
+                {
+                    var req = WebRequest.Create("https://www.webnovel.com/go/pcm/chapter/getContent?_csrfToken=" + csrfToken + "&bookId=" + bookInfoResp.data.bookInfo.bookId + "&chapterId=" + chapterInfo.ChapterUrl);
+                    req.Method = WebRequestMethods.Http.Get;
+                    req.Headers.Add("cookie", "_csrfToken=" + csrfToken + "; webnovel_uuid=" + uuid);
+                    var resp = req.GetResponse();
+                    using (var textReader = new StreamReader(resp.GetResponseStream()))
+                    {
+                        html = textReader.ReadToEnd();
+                    }
+                }
+                catch
+                {
+                    throw new Exception("Error fetching chapter-data");
+                }
+
+                Models.Webnovel.ChapterInfoResponse.ChapterInfoResponse chapterDataResp = null;
+
+                try
+                {
+                    chapterDataResp = JsonConvert.DeserializeObject<Models.Webnovel.ChapterInfoResponse.ChapterInfoResponse>(html);
+                }
+                catch
+                {
+                    throw new Exception("Error parsing chapter-data");
+                }
+
+                chapterData.Title = chapterDataResp.data.chapterName;
+                chapterData.Content = "";
+                var lastContent = chapterDataResp.data.contents.LastOrDefault();
+                foreach (var itm in chapterDataResp.data.contents)
+                {
+                    chapterData.Content += itm.content;
+                    if (itm != lastContent)
+                        chapterData.Content += Environment.NewLine;
+                }
+
+                var chapterItem_BookInfoResponse = bookInfoResp.data.volumeItems.SelectMany(i => i.chapterItems);
+                var currentItem = chapterItem_BookInfoResponse.FirstOrDefault(i => i.chapterId == chapterInfo.ChapterUrl);
+                if (currentItem != null)
+                {
+                    currentItem.content = chapterData.Content;
+                }
+                else
+                    throw new Exception("Data redundancy error. This shouldn't be possible. Please file an issue");
+            }
+            catch (Exception ex)
+            {
+                OnChapterDataFetchError?.Invoke(this, new ChapterDataFetchError()
+                {
+                    ChapterInfo = chapterInfo,
+                    Exception = ex,
+                });
+            }
+            OnChapterDataFetchSuccess?.Invoke(this, chapterData);
         }
 
         public void FetchChapterList()
         {
-            OnChapterListFetchSuccess(this, null);
-            OnChapterListFetchError(this, null);
-            throw new NotImplementedException();
+            var count = 0;
+            var chapters = new List<ChapterInfo>();
+            foreach (var itm in bookInfoResp.data.volumeItems)
+            {
+                foreach (var itm2 in itm.chapterItems)
+                {
+                    chapters.Add(new ChapterInfo()
+                    {
+                        ChapterUrl = itm2.chapterId,
+                        Index = ++count,
+                    });
+                }
+            }
+
+            OnChapterListFetchSuccess?.Invoke(this, chapters);
+            //OnChapterListFetchError(this, null); // isn't needed
         }
 
         public void FetchNovelInfo(string novelUrl)
@@ -60,10 +135,11 @@ namespace Novel_Downloader.Downloaders
                         html = textReader.ReadToEnd();
                     }
 
-                    #region Set csrfToken
+                    #region Set csrfToken & uuid
                     try
                     {
                         csrfToken = resp.Headers.GetValues("Set-Cookie").FirstOrDefault(i => i.ToLower().Contains("csrftoken")).Replace("; ", ";").Split(';').FirstOrDefault(i => i.ToLower().Contains("csrftoken")).Split('=')[1];
+                        uuid = resp.Headers.GetValues("Set-Cookie").FirstOrDefault(i => i.ToLower().Contains("webnovel_uuid")).Replace("; ", ";").Split(';').FirstOrDefault(i => i.ToLower().Contains("webnovel_uuid")).Split('=')[1];
                     }
                     catch
                     {
@@ -87,35 +163,6 @@ namespace Novel_Downloader.Downloaders
                         }
                     }
                     catch { }
-                    #endregion
-
-                    #region Get Title and Author
-                    IElement titleObj = null;
-                    try
-                    {
-                        titleObj = dom.QuerySelectorAll("head title").FirstOrDefault();
-                    }
-                    catch
-                    {
-                        throw new Exception("Can't get Novel-Title & Author Info, please check the URL entered");
-                    }
-
-                    string[] stuff = null;
-
-                    try
-                    {
-                        stuff = titleObj.TextContent.Trim().Split('-');
-                    }
-                    catch
-                    {
-                        throw new Exception("Can't get Novel-Title & Author Info, please check the URL entered -> ECODE 2");
-                    }
-
-                    if (stuff.Length != 3)
-                        throw new Exception("Can't get Novel-Title & Author Info, please check the URL entered -> ECODE 3");
-                    retThis.Title = stuff[0].Trim().Substring(5);
-                    retThis.Author = stuff[1].Trim();
-
                     #endregion
 
                     #region Get UniqueId & NovelUrl
@@ -147,30 +194,40 @@ namespace Novel_Downloader.Downloaders
 
                     #endregion
 
-                    #region Get Chapter Count
-                    IElement chapObj = null;
-                    // -- finding element close to chapter count
+                    #region Get Title, Author & Chapters
+
                     try
                     {
-                        chapObj = dom.QuerySelectorAll("body [data-report-bid=" + retThis.UniqueId + "]").FirstOrDefault();
+                        OnLog?.Invoke(this, "Fetching chapter list");
+                        req = WebRequest.Create("https://www.webnovel.com/go/pcm/chapter/get-chapter-list?_csrfToken=" + csrfToken + "&bookId=" + retThis.UniqueId);
+                        req.Method = WebRequestMethods.Http.Get;
+                        req.Headers.Add("cookie", "_csrfToken=" + csrfToken + "; webnovel_uuid=" + uuid);
+                        html = "";
+                        resp = req.GetResponse();
+                        using (var textReader = new StreamReader(resp.GetResponseStream()))
+                        {
+                            html = textReader.ReadToEnd();
+                        }
                     }
                     catch
                     {
-                        throw new Exception("Error getting chapter count");
+                        throw new Exception("Error fetching chapter list");
                     }
 
-                    // -- navigating to chapter count text
                     try
                     {
-                        chapObj = chapObj.ParentElement.QuerySelectorAll("strong span").FirstOrDefault();
+                        bookInfoResp = JsonConvert.DeserializeObject<Models.Webnovel.BookInfoResponse.BookInfoResponse>(html);
+                        if (bookInfoResp.code != 0)
+                            throw new Exception("Invalid chapter list code returned");
+                        retThis.Title = bookInfoResp.data.bookInfo.bookName;
+                        retThis.Author = bookInfoResp.data.bookInfo.authorName;
+                        retThis.ChapterCount = bookInfoResp.data.bookInfo.totalChapterNum;
+                        OnLog?.Invoke(this, "Done");
                     }
                     catch
                     {
-                        throw new Exception("Error getting chapter count -> ECODE 2");
+                        throw new Exception("Error parsing chapter list");
                     }
-
-                    var chapterText = chapObj.TextContent.Trim();
-                    retThis.ChapterCount = Convert.ToInt32(chapterText.Substring(0, chapterText.IndexOf(" ")));
 
                     #endregion
 
@@ -187,8 +244,10 @@ namespace Novel_Downloader.Downloaders
 
         public void ResetClient()
         {
+            uuid = "";
             csrfToken = "";
             novelInfo = null;
+            bookInfoResp = null;
         }
 
         public bool UrlMatch(string novelUrl)

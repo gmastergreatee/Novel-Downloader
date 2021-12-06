@@ -5,6 +5,8 @@ namespace Novel_Downloader.Models
 {
     interface IDownloader
     {
+        event EventHandler<string> OnLog;
+
         event EventHandler<NovelInfo> OnNovelInfoFetchSuccess;
         event EventHandler<Exception> OnNovelInfoFetchError;
 
