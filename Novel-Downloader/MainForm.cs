@@ -92,7 +92,13 @@ namespace Novel_Downloader
             var chapterInfosToDownload = e.ToList();
             new Task(() =>
             {
-                OnLog(this, "Saving novel-info...");
+                if (pictureBox1.Image != null)
+                {
+                    OnLog(sender, "Saving image...");
+                    pictureBox1.Image.Save(Path.Combine(TargetPath, "image.png"));
+                }
+
+                OnLog(sender, "Saving novel-info...");
                 try
                 {
                     File.WriteAllText(Path.Combine(TargetPath, "info.json"), JsonConvert.SerializeObject(novelInfo));
@@ -104,7 +110,7 @@ namespace Novel_Downloader
                     return;
                 }
 
-                OnLog(this, "Saving chapter-list...");
+                OnLog(sender, "Saving chapter-list...");
                 try
                 {
                     File.WriteAllText(Path.Combine(TargetPath, "list.json"), JsonConvert.SerializeObject(chapterInfos));
@@ -379,10 +385,10 @@ namespace Novel_Downloader
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
                 var novelFolderName = novelInfo.Author + " - " + novelInfo.Title;
-                var invalidPathChars = Path.GetInvalidFileNameChars();
+                var invalidPathChars = Path.GetInvalidFileNameChars().Union(Path.GetInvalidPathChars()).ToList();
                 foreach (var ch in invalidPathChars)
                 {
-                    novelFolderName.Replace(ch.ToString(), "");
+                    novelFolderName = novelFolderName.Replace(ch.ToString(), "");
                 }
                 path = Path.Combine(path, novelFolderName);
                 if (!Directory.Exists(path))
@@ -390,7 +396,7 @@ namespace Novel_Downloader
             }
             catch
             {
-                txtConsole.AppendText("ERROR -> Invalid folder path, please select a valid filepath.");
+                OnLog(this, "ERROR -> Invalid folder path, please select a valid filepath.");
                 return;
             }
 

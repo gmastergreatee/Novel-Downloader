@@ -164,7 +164,7 @@ namespace Novel_Downloader.Downloaders
                         {
                             var imgUrl = imageObj.GetAttribute("content");
                             if (!string.IsNullOrWhiteSpace(imgUrl))
-                                retThis.ImageUrl = imgUrl;
+                                retThis.ImageUrl = imgUrl.Replace("/150/150/", "/600/600/").Replace("/quality/80", "/quality/40");
                         }
                     }
                     catch { }
