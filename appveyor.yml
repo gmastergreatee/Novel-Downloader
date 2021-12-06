@@ -1,7 +1,8 @@
 configuration: Release
 
 after_build:
-  - 7z a Novel-Downloader.zip C:\projects\novel-downloader\Novel-Downloader\bin\Release\Novel-Downloader.exe C:\projects\novel-downloader\Novel-Downloader\bin\Release\VersOne.Epub.dll C:\projects\novel-downloader\Novel-Downloader\bin\Release\Newtonsoft.Json.dll C:\projects\novel-downloader\Novel-Downloader\bin\Release\AngleSharp.dll C:\projects\novel-downloader\Novel-Downloader\bin\Release\System.Buffers.dll C:\projects\novel-downloader\Novel-Downloader\bin\Release\System.Runtime.CompilerServices.Unsafe.dll C:\projects\novel-downloader\Novel-Downloader\bin\Release\System.Text.Encoding.CodePages.dll
+  - 7z a Novel-Downloader.zip C:\projects\novel-downloader\Novel-Downloader\bin\Release\AngleSharp.dll C:\projects\novel-downloader\Novel-Downloader\bin\Release\Core.dll 
+  C:\projects\novel-downloader\Novel-Downloader\bin\Release\Downloader.Webnovel.dll C:\projects\novel-downloader\Novel-Downloader\bin\Release\EpubSharp.dll C:\projects\novel-downloader\Novel-Downloader\bin\Release\Newtonsoft.Json.dll C:\projects\novel-downloader\Novel-Downloader\bin\Release\Novel-Downloader.exe C:\projects\novel-downloader\Novel-Downloader\bin\Release\System.Buffers.dll C:\projects\novel-downloader\Novel-Downloader\bin\Release\System.Runtime.CompilerServices.Unsafe.dll C:\projects\novel-downloader\Novel-Downloader\bin\Release\System.Text.Encoding.CodePages.dll
 
 artifacts:
   - path: Novel-Downloader.zip
