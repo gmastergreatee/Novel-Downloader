@@ -2,11 +2,11 @@
 using System.IO;
 using System.Linq;
 using Core.Models;
-using Newtonsoft.Json;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Web.Script.Serialization;
 
 namespace Novel_Downloader
 {
@@ -102,7 +102,7 @@ namespace Novel_Downloader
                 OnLog(sender, "Saving novel-info...");
                 try
                 {
-                    File.WriteAllText(Path.Combine(TargetPath, "data", "info.json"), JsonConvert.SerializeObject(novelInfo));
+                    File.WriteAllText(Path.Combine(TargetPath, "data", "info.json"), SerializeJson(novelInfo));
                 }
                 catch
                 {
@@ -114,7 +114,7 @@ namespace Novel_Downloader
                 OnLog(sender, "Saving chapter-list...");
                 try
                 {
-                    File.WriteAllText(Path.Combine(TargetPath, "data", "list.json"), JsonConvert.SerializeObject(chapterInfos));
+                    File.WriteAllText(Path.Combine(TargetPath, "data", "list.json"), SerializeJson(chapterInfos));
                 }
                 catch
                 {
@@ -197,7 +197,7 @@ namespace Novel_Downloader
         {
             try
             {
-                File.WriteAllText(Path.Combine(TargetPath, "data", e.Index + ".json"), JsonConvert.SerializeObject(e));
+                File.WriteAllText(Path.Combine(TargetPath, "data", e.Index + ".json"), SerializeJson(e));
                 chapterDatas.Add(e);
 
                 Invoke(new Action(() =>
@@ -419,6 +419,12 @@ namespace Novel_Downloader
             }
 
             TargetPath = path;
+        }
+
+        string SerializeJson(object obj)
+        {
+            var JavaScriptSerializer = new JavaScriptSerializer();
+            return JavaScriptSerializer.Serialize(obj);
         }
         #endregion
     }

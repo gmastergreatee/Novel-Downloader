@@ -5,9 +5,9 @@ using AngleSharp;
 using System.Linq;
 using Core.Models;
 using AngleSharp.Dom;
-using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Web.Script.Serialization;
 
 namespace Webnovel
 {
@@ -61,7 +61,7 @@ namespace Webnovel
 
                 try
                 {
-                    chapterDataResp = JsonConvert.DeserializeObject<Models.ChapterInfoResponse.ChapterInfoResponse>(html);
+                    chapterDataResp = DeserializeJson<Models.ChapterInfoResponse.ChapterInfoResponse>(html);
                 }
                 catch
                 {
@@ -221,7 +221,7 @@ namespace Webnovel
 
                     try
                     {
-                        bookInfoResp = JsonConvert.DeserializeObject<Models.BookInfoResponse.BookInfoResponse>(html);
+                        bookInfoResp = DeserializeJson<Models.BookInfoResponse.BookInfoResponse>(html);
                         if (bookInfoResp.code != 0)
                             throw new Exception("Invalid chapter list code returned");
                         retThis.Title = bookInfoResp.data.bookInfo.bookName;
@@ -326,6 +326,12 @@ namespace Webnovel
 
             book.Write(epubFilePath);
             OnLog?.Invoke(this, "File saved to \"" + epubFilePath + "\"");
+        }
+
+        T DeserializeJson<T>(string Json)
+        {
+            var JavaScriptSerializer = new JavaScriptSerializer();
+            return JavaScriptSerializer.Deserialize<T>(Json);
         }
     }
 }
