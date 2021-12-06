@@ -292,14 +292,24 @@ namespace Webnovel
             writer.ClearAuthors();
             writer.AddAuthor(novelInfo.Author);
             writer.SetTitle(novelInfo.Author + " - " + novelInfo.Title);
-            if (File.Exists(Path.Combine(targetPath, "data", "image.png")))
+            byte[] imageBytes = null;
+            if (File.Exists(Path.Combine(targetPath, "data", "image.jpg")))
             {
-                writer.SetCover(File.ReadAllBytes(Path.Combine(targetPath, "data", "image.jpg")), ImageFormat.Jpeg);
+                imageBytes = File.ReadAllBytes(Path.Combine(targetPath, "data", "image.jpg"));
+                writer.SetCover(imageBytes, ImageFormat.Jpeg);
             }
             writer.ClearChapters();
 
             writer.AddFile("style.css", "pirate{display:none}", EpubSharp.Format.EpubContentType.Css);
             var cssInclude = "<link rel=\"stylesheet\" href=\"style.css\" >";
+
+            writer.AddChapter(
+                "Coverpage",
+                "<div style=\"text-align:center;padding-top:30px\">" + (imageBytes == null ? "<div style=\"margin-top:100px\"></div>" : "<img src=\"cover.jpeg\" />") + 
+                "<h2>" + novelInfo.Title + "</h2>" +
+                "<h3>" + novelInfo.Author + "</h3>" +
+                "</div>"
+            );
 
             var count = 1;
             foreach (var itm in bookInfoResp.data.volumeItems)

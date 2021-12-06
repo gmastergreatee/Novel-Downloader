@@ -287,7 +287,11 @@ namespace Novel_Downloader
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Environment.Exit(0);
+            try
+            {
+                Environment.Exit(0);
+            }
+            catch { }
         }
 
         #endregion
