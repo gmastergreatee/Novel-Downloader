@@ -8,4 +8,4 @@ Download from [appveyor](https://ci.appveyor.com/project/gmastergreatee/novel-do
 
 |Supported Sites|Status|
 |-----|------|
-|WebNovel.com|In develoopment (Fetching chapter list)|
+|WebNovel.com|In development (EPUB generation)|
