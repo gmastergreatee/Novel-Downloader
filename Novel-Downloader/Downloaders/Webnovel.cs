@@ -69,10 +69,10 @@ namespace Novel_Downloader.Downloaders
                 }
 
                 chapterData.Index = chapterInfo.Index;
-                chapterData.Title = chapterDataResp.data.chapterName;
+                chapterData.Title = chapterDataResp.data.chapterInfo.chapterName;
                 chapterData.Content = "";
-                var lastContent = chapterDataResp.data.contents.LastOrDefault();
-                foreach (var itm in chapterDataResp.data.contents)
+                var lastContent = chapterDataResp.data.chapterInfo.contents.LastOrDefault();
+                foreach (var itm in chapterDataResp.data.chapterInfo.contents)
                 {
                     chapterData.Content += itm.content;
                     if (itm != lastContent)

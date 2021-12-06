@@ -475,6 +475,7 @@
             this.MinimumSize = new System.Drawing.Size(967, 643);
             this.Name = "MainForm";
             this.Text = "Novel-Downloader";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.SizeChanged += new System.EventHandler(this.MainForm_SizeChanged);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);

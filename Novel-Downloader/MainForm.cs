@@ -88,7 +88,8 @@ namespace Novel_Downloader
 
         private void OnChapterListFetchSuccess(object sender, List<ChapterInfo> e)
         {
-            errorChapterInfos = e.ToList();
+            chapterInfos = e.ToList();
+            var chapterInfosToDownload = e.ToList();
             new Task(() =>
             {
                 OnLog(this, "Saving novel-info...");
@@ -99,6 +100,7 @@ namespace Novel_Downloader
                 catch
                 {
                     OnLog(sender, "ERROR -> Error writing novel-info");
+                    UnlockControls(true);
                     return;
                 }
 
@@ -110,39 +112,39 @@ namespace Novel_Downloader
                 catch
                 {
                     OnLog(sender, "ERROR -> Error writing chapter-list");
+                    UnlockControls(true);
                     return;
                 }
 
                 var count = 1;
-                while (errorChapterInfos.Count > 0)
+                while (chapterInfosToDownload.Count > 0)
                 {
-                    foreach (var chapter in errorChapterInfos)
+                    foreach (var chapter in chapterInfosToDownload)
                     {
                         OnLog(
                             this,
-                            "[" + count + "/" + chapterInfos.Count + "] Downloading -> " +
+                            "[" + count + "/" + e.Count + "] Downloading -> " +
                             (string.IsNullOrWhiteSpace(chapter.ChapterName) ? "..." : chapter.ChapterName)
                         );
                         currentDownloader.FetchChapterData(chapter);
-
-                        chapterInfos.Add(chapter);
-                        errorChapterInfos.Remove(chapter);
 
                         if (stopFetchingChapterData)
                             break;
 
                         count++;
                     }
+                    chapterInfosToDownload = errorChapterInfos.ToList();
+                    errorChapterInfos.Clear();
 
                     if (stopFetchingChapterData)
                         break;
 
                     var forceBreak = false;
-                    if (errorChapterInfos.Count > 0)
+                    if (chapterInfosToDownload.Count > 0)
                     {
                         Invoke(new Action(() =>
                         {
-                            if (MessageBox.Show(errorChapterInfos.Count + " chapters weren't downloaded. Do you want to retry ?", "Query", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                            if (MessageBox.Show(chapterInfosToDownload.Count + " chapters weren't downloaded. Do you want to retry ?", "Query", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
                             {
                                 forceBreak = true;
                             }
@@ -164,6 +166,11 @@ namespace Novel_Downloader
                 OnLog(sender, count + " chapters fetched");
 
                 OnLog(sender, "{DEVELOPER_PROMPT} -> CODE TO GENERATE EPUB HERE");
+
+                Invoke(new Action(() =>
+                {
+                    UnlockControls(chapterInfosToDownload.Count <= 0);
+                }));
             }).Start();
         }
 
@@ -184,6 +191,7 @@ namespace Novel_Downloader
             try
             {
                 File.WriteAllText(Path.Combine(TargetPath, e.Index + ".json"), JsonConvert.SerializeObject(e));
+                chapterDatas.Add(e);
             }
             catch
             {
@@ -242,28 +250,9 @@ namespace Novel_Downloader
 
         private void btnGrabChapters_Click(object sender, EventArgs e)
         {
-            var path = txtFolderPath.Text.Trim();
-            try
-            {
-                if (!IsFullPath(path))
-                    path = Path.Combine(Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName), path);
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
-                var novelFolderName = novelInfo.Title;
-                var invalidPathChars = Path.GetInvalidFileNameChars();
-                foreach (var ch in invalidPathChars)
-                {
-                    novelFolderName.Replace(ch.ToString(), "");
-                }
-                path = Path.Combine(path, novelFolderName);
-            }
-            catch
-            {
-                txtConsole.AppendText("ERROR -> Invalid folder path, please select a valid filepath.");
+            SetTargetPath();
+            if (string.IsNullOrWhiteSpace(TargetPath))
                 return;
-            }
-
-            TargetPath = path;
 
             txtConsole.AppendText("Downloading..." + Environment.NewLine);
             LockControls();
@@ -281,6 +270,11 @@ namespace Novel_Downloader
         private void ImageLoaded(object sender, AsyncCompletedEventArgs e)
         {
             FixImageHeight();
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Environment.Exit(0);
         }
 
         #endregion
@@ -375,7 +369,33 @@ namespace Novel_Downloader
                 && !Path.GetPathRoot(path).Equals(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal);
         }
 
-        #endregion
+        void SetTargetPath()
+        {
+            var path = txtFolderPath.Text.Trim();
+            try
+            {
+                if (!IsFullPath(path))
+                    path = Path.Combine(Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName), path);
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+                var novelFolderName = novelInfo.Author + " - " + novelInfo.Title;
+                var invalidPathChars = Path.GetInvalidFileNameChars();
+                foreach (var ch in invalidPathChars)
+                {
+                    novelFolderName.Replace(ch.ToString(), "");
+                }
+                path = Path.Combine(path, novelFolderName);
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+            }
+            catch
+            {
+                txtConsole.AppendText("ERROR -> Invalid folder path, please select a valid filepath.");
+                return;
+            }
 
+            TargetPath = path;
+        }
+        #endregion
     }
 }

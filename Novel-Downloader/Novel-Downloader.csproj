@@ -70,6 +70,7 @@
     <Compile Include="Downloaders\Models\Webnovel\BookInfoResponse\GetChapterData.cs" />
     <Compile Include="Downloaders\Models\Webnovel\BookInfoResponse\VolumeItem.cs" />
     <Compile Include="Downloaders\Models\Webnovel\ChapterInfoResponse\ChapterInfo.cs" />
+    <Compile Include="Downloaders\Models\Webnovel\ChapterInfoResponse\ChapterInfoData.cs" />
     <Compile Include="Downloaders\Models\Webnovel\ChapterInfoResponse\ChapterInfoResponse.cs" />
     <Compile Include="Downloaders\Models\Webnovel\ChapterInfoResponse\Content.cs" />
     <Compile Include="Downloaders\Webnovel.cs" />
