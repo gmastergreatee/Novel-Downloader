@@ -2,14 +2,12 @@
 using System.IO;
 using System.Net;
 using AngleSharp;
-using System.Text;
 using System.Linq;
-using System.Net.Http;
+using AngleSharp.Dom;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Novel_Downloader.Models;
 using System.Collections.Generic;
-using AngleSharp.Dom;
-using Newtonsoft.Json;
 
 namespace Novel_Downloader.Downloaders
 {
@@ -70,6 +68,7 @@ namespace Novel_Downloader.Downloaders
                     throw new Exception("Error parsing chapter-data");
                 }
 
+                chapterData.Index = chapterInfo.Index;
                 chapterData.Title = chapterDataResp.data.chapterName;
                 chapterData.Content = "";
                 var lastContent = chapterDataResp.data.contents.LastOrDefault();
@@ -110,8 +109,11 @@ namespace Novel_Downloader.Downloaders
                 {
                     chapters.Add(new ChapterInfo()
                     {
-                        ChapterUrl = itm2.chapterId,
                         Index = ++count,
+                        VolumeId = itm.volumeId,
+                        VolumeName = itm.volumeName,
+                        ChapterUrl = itm2.chapterId,
+                        ChapterName = itm2.chapterName,
                     });
                 }
             }
@@ -149,7 +151,10 @@ namespace Novel_Downloader.Downloaders
 
                     var dom = await BrowsingContext.New(Configuration.Default).OpenAsync(r => r.Content(html));
 
-                    var retThis = new NovelInfo();
+                    var retThis = new NovelInfo
+                    {
+                        DownloaderId = "webnovel.com"
+                    };
 
                     #region Get Image URL
                     try
@@ -253,6 +258,11 @@ namespace Novel_Downloader.Downloaders
         public bool UrlMatch(string novelUrl)
         {
             return novelUrl.ToLower().StartsWith("https://www.webnovel.com/book/");
+        }
+
+        public void GenerateEPUB(string targetPath)
+        {
+            throw new NotImplementedException();
         }
     }
 }

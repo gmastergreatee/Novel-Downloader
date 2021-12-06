@@ -175,7 +175,7 @@
             this.txtFolderPath.Name = "txtFolderPath";
             this.txtFolderPath.Size = new System.Drawing.Size(296, 26);
             this.txtFolderPath.TabIndex = 3;
-            this.txtFolderPath.Text = "\\Novels\\one-piece-the-legend-of-johnny-silverhand";
+            this.txtFolderPath.Text = "Novels";
             // 
             // label5
             // 

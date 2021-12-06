@@ -1,4 +1,5 @@
-﻿using Novel_Downloader.Downloaders;
+﻿using Newtonsoft.Json;
+using Novel_Downloader.Downloaders;
 using Novel_Downloader.Models;
 using System;
 using System.Collections.Generic;
@@ -17,17 +18,19 @@ namespace Novel_Downloader
     {
         #region vars
 
-        string NovelURL { get; set; } = "";
+        NovelInfo novelInfo { get; set; } = null;
 
         IEnumerable<IDownloader> downloaders = new List<IDownloader>()
         {
             new Webnovel(),
         };
 
-        IDownloader currentDownloader = null;
-        List<ChapterInfo> chapterInfos = null;
-        List<ChapterInfo> errorChapterInfos = null;
-        List<ChapterData> chapterDatas = null;
+        IDownloader currentDownloader { get; set; } = null;
+        List<ChapterInfo> chapterInfos { get; set; } = null;
+        List<ChapterInfo> errorChapterInfos { get; set; } = null;
+        List<ChapterData> chapterDatas { get; set; } = null;
+        bool stopFetchingChapterData { get; set; } = false;
+        string TargetPath { get; set; } = "";
 
         #endregion
 
@@ -51,7 +54,7 @@ namespace Novel_Downloader
 
         private void OnNovelInfoFetchSuccess(object sender, NovelInfo novelInfo)
         {
-            NovelURL = novelInfo.NovelUrl;
+            this.novelInfo = novelInfo;
             Invoke(new Action(() =>
             {
                 if (!string.IsNullOrWhiteSpace(novelInfo.ImageUrl))
@@ -76,7 +79,7 @@ namespace Novel_Downloader
         {
             Invoke(new Action(() =>
             {
-                txtConsole.AppendText("Error fetching novel info." + Environment.NewLine + "---------- ERROR ----------" + Environment.NewLine + ParseExceptionMessage(e) + Environment.NewLine + "---------------------------" + Environment.NewLine);
+                txtConsole.AppendText("ERROR -> Error fetching novel info." + Environment.NewLine + "---------- ERROR ----------" + Environment.NewLine + ParseExceptionMessage(e) + Environment.NewLine + "---------------------------" + Environment.NewLine);
                 UnlockControls();
             }));
         }
@@ -85,17 +88,91 @@ namespace Novel_Downloader
 
         private void OnChapterListFetchSuccess(object sender, List<ChapterInfo> e)
         {
-            Invoke(new Action(() =>
+            errorChapterInfos = e.ToList();
+            new Task(() =>
             {
+                OnLog(this, "Saving novel-info...");
+                try
+                {
+                    File.WriteAllText(Path.Combine(TargetPath, "info.json"), JsonConvert.SerializeObject(novelInfo));
+                }
+                catch
+                {
+                    OnLog(sender, "ERROR -> Error writing novel-info");
+                    return;
+                }
 
-            }));
+                OnLog(this, "Saving chapter-list...");
+                try
+                {
+                    File.WriteAllText(Path.Combine(TargetPath, "list.json"), JsonConvert.SerializeObject(chapterInfos));
+                }
+                catch
+                {
+                    OnLog(sender, "ERROR -> Error writing chapter-list");
+                    return;
+                }
+
+                var count = 1;
+                while (errorChapterInfos.Count > 0)
+                {
+                    foreach (var chapter in errorChapterInfos)
+                    {
+                        OnLog(
+                            this,
+                            "[" + count + "/" + chapterInfos.Count + "] Downloading -> " +
+                            (string.IsNullOrWhiteSpace(chapter.ChapterName) ? "..." : chapter.ChapterName)
+                        );
+                        currentDownloader.FetchChapterData(chapter);
+
+                        chapterInfos.Add(chapter);
+                        errorChapterInfos.Remove(chapter);
+
+                        if (stopFetchingChapterData)
+                            break;
+
+                        count++;
+                    }
+
+                    if (stopFetchingChapterData)
+                        break;
+
+                    var forceBreak = false;
+                    if (errorChapterInfos.Count > 0)
+                    {
+                        Invoke(new Action(() =>
+                        {
+                            if (MessageBox.Show(errorChapterInfos.Count + " chapters weren't downloaded. Do you want to retry ?", "Query", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                            {
+                                forceBreak = true;
+                            }
+                        }));
+                    }
+
+                    if (forceBreak)
+                        break;
+                }
+
+                if (!stopFetchingChapterData)
+                    OnLog(sender, "Download complete");
+                else
+                {
+                    stopFetchingChapterData = false;
+                    OnLog(sender, "Download stopped");
+                }
+
+                OnLog(sender, count + " chapters fetched");
+
+                OnLog(sender, "{DEVELOPER_PROMPT} -> CODE TO GENERATE EPUB HERE");
+            }).Start();
         }
 
         private void OnChapterListFetchError(object sender, Exception e)
         {
+            OnLog(sender, "ERROR -> Error fetching chapter list." + Environment.NewLine + "---------- ERROR ----------" + Environment.NewLine + ParseExceptionMessage(e) + Environment.NewLine);
+
             Invoke(new Action(() =>
             {
-                txtConsole.AppendText("Error fetching chapter list." + Environment.NewLine + "---------- ERROR ----------" + Environment.NewLine + ParseExceptionMessage(e) + Environment.NewLine);
                 UnlockControls(true);
             }));
         }
@@ -104,18 +181,22 @@ namespace Novel_Downloader
 
         private void OnChapterDataFetchSuccess(object sender, ChapterData e)
         {
-            Invoke(new Action(() =>
+            try
             {
-
-            }));
+                File.WriteAllText(Path.Combine(TargetPath, e.Index + ".json"), JsonConvert.SerializeObject(e));
+            }
+            catch
+            {
+                OnLog(sender, "ERROR -> Error writing chapter-data");
+            }
         }
 
         private void OnChapterDataFetchError(object sender, ChapterDataFetchError e)
         {
-            Invoke(new Action(() =>
-            {
-
-            }));
+            OnLog(sender, "ERROR -> " + ParseExceptionMessage(e.Exception));
+            var alreadyExist = errorChapterInfos.FirstOrDefault(i => i.ChapterUrl == e.ChapterInfo.ChapterUrl) != null;
+            if (!alreadyExist)
+                errorChapterInfos.Add(e.ChapterInfo);
         }
 
         #endregion
@@ -161,6 +242,29 @@ namespace Novel_Downloader
 
         private void btnGrabChapters_Click(object sender, EventArgs e)
         {
+            var path = txtFolderPath.Text.Trim();
+            try
+            {
+                if (!IsFullPath(path))
+                    path = Path.Combine(Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName), path);
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+                var novelFolderName = novelInfo.Title;
+                var invalidPathChars = Path.GetInvalidFileNameChars();
+                foreach (var ch in invalidPathChars)
+                {
+                    novelFolderName.Replace(ch.ToString(), "");
+                }
+                path = Path.Combine(path, novelFolderName);
+            }
+            catch
+            {
+                txtConsole.AppendText("ERROR -> Invalid folder path, please select a valid filepath.");
+                return;
+            }
+
+            TargetPath = path;
+
             txtConsole.AppendText("Downloading..." + Environment.NewLine);
             LockControls();
             new Task(() =>
@@ -221,7 +325,8 @@ namespace Novel_Downloader
         {
             txtConsole.Clear();
             currentDownloader = null;
-            NovelURL = "";
+            novelInfo = null;
+            TargetPath = "";
             lblTitle.Text = "NA";
             lblAuthor.Text = "NA";
             lblChapterCount.Text = "NA";
@@ -260,6 +365,14 @@ namespace Novel_Downloader
 
             txtURL.Enabled = true;
             txtFolderPath.Enabled = true;
+        }
+
+        bool IsFullPath(string path)
+        {
+            return !String.IsNullOrWhiteSpace(path)
+                && path.IndexOfAny(System.IO.Path.GetInvalidPathChars().ToArray()) == -1
+                && Path.IsPathRooted(path)
+                && !Path.GetPathRoot(path).Equals(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal);
         }
 
         #endregion

@@ -15,11 +15,12 @@ namespace Novel_Downloader.Models
 
         event EventHandler<ChapterData> OnChapterDataFetchSuccess;
         event EventHandler<ChapterDataFetchError> OnChapterDataFetchError;
-
+        
         bool UrlMatch(string novelUrl);
         void FetchNovelInfo(string novelUrl);
         void FetchChapterList();
         void FetchChapterData(ChapterInfo chapterInfo);
         void ResetClient();
+        void GenerateEPUB(string targetPath);
     }
 }

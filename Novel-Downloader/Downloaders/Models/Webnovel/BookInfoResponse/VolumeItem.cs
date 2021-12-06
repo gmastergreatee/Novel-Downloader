@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Novel_Downloader.Downloaders.Models.Webnovel.BookInfoResponse
 {
     public class VolumeItem
     {
-        public List<ChapterItem> chapterItems { get; set; }
+        public int volumeId { get; set; }
         public string volumeName { get; set; }
+        public List<ChapterItem> chapterItems { get; set; }
     }
 }
