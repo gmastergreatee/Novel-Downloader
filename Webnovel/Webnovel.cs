@@ -3,20 +3,20 @@ using System.IO;
 using System.Net;
 using AngleSharp;
 using System.Linq;
+using Core.Models;
 using AngleSharp.Dom;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
-using Novel_Downloader.Models;
 using System.Collections.Generic;
 
-namespace Novel_Downloader.Downloaders
+namespace Webnovel
 {
     public class Webnovel : IDownloader
     {
         string uuid = "";
         string csrfToken = "";
         NovelInfo novelInfo = null;
-        Models.Webnovel.BookInfoResponse.BookInfoResponse bookInfoResp = null;
+        Models.BookInfoResponse.BookInfoResponse bookInfoResp = null;
 
         public Webnovel()
         {
@@ -57,11 +57,11 @@ namespace Novel_Downloader.Downloaders
                     throw new Exception("Error fetching chapter-data");
                 }
 
-                Models.Webnovel.ChapterInfoResponse.ChapterInfoResponse chapterDataResp = null;
+                Models.ChapterInfoResponse.ChapterInfoResponse chapterDataResp = null;
 
                 try
                 {
-                    chapterDataResp = JsonConvert.DeserializeObject<Models.Webnovel.ChapterInfoResponse.ChapterInfoResponse>(html);
+                    chapterDataResp = JsonConvert.DeserializeObject<Models.ChapterInfoResponse.ChapterInfoResponse>(html);
                 }
                 catch
                 {
@@ -221,7 +221,7 @@ namespace Novel_Downloader.Downloaders
 
                     try
                     {
-                        bookInfoResp = JsonConvert.DeserializeObject<Models.Webnovel.BookInfoResponse.BookInfoResponse>(html);
+                        bookInfoResp = JsonConvert.DeserializeObject<Models.BookInfoResponse.BookInfoResponse>(html);
                         if (bookInfoResp.code != 0)
                             throw new Exception("Invalid chapter list code returned");
                         retThis.Title = bookInfoResp.data.bookInfo.bookName;

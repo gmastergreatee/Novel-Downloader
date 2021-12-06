@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Novel_Downloader.Downloaders.Models.Webnovel.BookInfoResponse
+namespace Webnovel.Models.BookInfoResponse
 {
     public class ChapterItem
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Novel_Downloader.Models
+namespace Core.Models
 {
-    interface IDownloader
+    public interface IDownloader
     {
         event EventHandler<string> OnLog;
 

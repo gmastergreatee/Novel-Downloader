@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Novel_Downloader.Downloaders.Models.Webnovel.ChapterInfoResponse
+﻿namespace Webnovel.Models.ChapterInfoResponse
 {
     public class ChapterInfoResponse
     {

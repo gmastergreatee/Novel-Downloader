@@ -1,4 +1,4 @@
-﻿namespace Novel_Downloader.Downloaders.Models.Webnovel.BookInfoResponse
+﻿namespace Webnovel.Models.BookInfoResponse
 {
     public class BookInfoResponse
     {

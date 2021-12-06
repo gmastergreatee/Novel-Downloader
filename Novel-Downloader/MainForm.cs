@@ -1,16 +1,12 @@
-﻿using Newtonsoft.Json;
-using Novel_Downloader.Downloaders;
-using Novel_Downloader.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Core.Models;
+using Newtonsoft.Json;
 using System.Windows.Forms;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Novel_Downloader
 {
@@ -22,7 +18,7 @@ namespace Novel_Downloader
 
         IEnumerable<IDownloader> downloaders = new List<IDownloader>()
         {
-            new Webnovel(),
+            new Webnovel.Webnovel(),
         };
 
         IDownloader currentDownloader { get; set; } = null;
@@ -169,7 +165,7 @@ namespace Novel_Downloader
                     OnLog(sender, "Download stopped");
                 }
 
-                OnLog(sender, count + " chapters fetched");
+                OnLog(sender, (count - 1) + " chapters fetched");
 
                 OnLog(sender, "{DEVELOPER_PROMPT} -> CODE TO GENERATE EPUB HERE");
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Novel_Downloader.Downloaders.Models.Webnovel.BookInfoResponse
+namespace Webnovel.Models.BookInfoResponse
 {
     public class VolumeItem
     {

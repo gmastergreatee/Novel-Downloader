@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.28307.1705
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Novel-Downloader", "Novel-Downloader\Novel-Downloader.csproj", "{CBFBBE28-5E98-496E-995E-4984E3710901}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webnovel", "Webnovel\Webnovel.csproj", "{A111C2B1-5A55-4726-ADAD-64EF8BDD2A58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{B5DCEC59-3C45-415D-872F-11EE791D141F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{CBFBBE28-5E98-496E-995E-4984E3710901}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBFBBE28-5E98-496E-995E-4984E3710901}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBFBBE28-5E98-496E-995E-4984E3710901}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A111C2B1-5A55-4726-ADAD-64EF8BDD2A58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A111C2B1-5A55-4726-ADAD-64EF8BDD2A58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A111C2B1-5A55-4726-ADAD-64EF8BDD2A58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A111C2B1-5A55-4726-ADAD-64EF8BDD2A58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5DCEC59-3C45-415D-872F-11EE791D141F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5DCEC59-3C45-415D-872F-11EE791D141F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5DCEC59-3C45-415D-872F-11EE791D141F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5DCEC59-3C45-415D-872F-11EE791D141F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

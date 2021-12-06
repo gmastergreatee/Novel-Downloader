@@ -1,4 +1,4 @@
-﻿namespace Novel_Downloader.Models
+﻿namespace Core.Models
 {
     public class NovelInfo
     {
