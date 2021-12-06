@@ -8,7 +8,6 @@ using AngleSharp.Dom;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using EpubSharp;
 
 namespace Webnovel
 {
@@ -165,7 +164,7 @@ namespace Webnovel
                         {
                             var imgUrl = imageObj.GetAttribute("content");
                             if (!string.IsNullOrWhiteSpace(imgUrl))
-                                retThis.ImageUrl = imgUrl.Replace("/150/150/", "/600/600/").Replace("/quality/80", "/quality/40");
+                                retThis.ImageUrl = imgUrl.ToString().Replace("/150/150", "/600/600").Replace("/quality/80", "/quality/40");
                         }
                     }
                     catch { }
@@ -273,66 +272,59 @@ namespace Webnovel
             }
             var epubFilePath = Path.Combine(targetPath, epubFileName);
 
-            EpubWriter writer;
-            if (File.Exists(epubFilePath))
+            EpubGenerator.Ebook book = new EpubGenerator.Ebook()
             {
-                try
-                {
-                    writer = new EpubWriter(EpubReader.Read(epubFilePath));
-                }
-                catch
-                {
-                    OnLog?.Invoke(this, "Error loading existing epub file");
-                    return;
-                }
-            }
-            else
-                writer = new EpubWriter();
+                Title = novelInfo.Title,
+                Author = novelInfo.Author,
+            };
 
-            writer.ClearAuthors();
-            writer.AddAuthor(novelInfo.Author);
-            writer.SetTitle(novelInfo.Author + " - " + novelInfo.Title);
             byte[] imageBytes = null;
             if (File.Exists(Path.Combine(targetPath, "data", "image.jpg")))
             {
                 imageBytes = File.ReadAllBytes(Path.Combine(targetPath, "data", "image.jpg"));
-                writer.SetCover(imageBytes, ImageFormat.Jpeg);
+                var fData = new EpubGenerator.FileData()
+                {
+                    FileName = "image.jpeg",
+                    FileType = EpubGenerator.EnumFileType.JPEG,
+                    IsCoverImage = true,
+                };
+                fData.PutBytes(imageBytes);
+                book.AddFile(fData);
             }
-            writer.ClearChapters();
 
-            writer.AddFile("style.css", "pirate{display:none}", EpubSharp.Format.EpubContentType.Css);
-            var cssInclude = "<link rel=\"stylesheet\" href=\"style.css\" >";
-
-            writer.AddChapter(
-                "Coverpage",
-                "<div style=\"text-align:center;padding-top:30px\">" + (imageBytes == null ? "<div style=\"margin-top:100px\"></div>" : "<img src=\"cover.jpeg\" />") + 
-                "<h2>" + novelInfo.Title + "</h2>" +
-                "<h3>" + novelInfo.Author + "</h3>" +
-                "</div>"
-            );
+            {
+                var styleSheet = new EpubGenerator.FileData()
+                {
+                    FileName = "style.css",
+                    FileType = EpubGenerator.EnumFileType.CSS,
+                };
+                styleSheet.PutString("pirate{display:none}");
+                book.AddFile(styleSheet);
+            }
+            var cssInclude = "<link rel=\"stylesheet\" href=\"../css/style.css\" >";
 
             var count = 1;
             foreach (var itm in bookInfoResp.data.volumeItems)
             {
-                if (!string.IsNullOrWhiteSpace(itm.volumeName))
-                {
-                    writer.AddChapter(
-                        itm.volumeName,
-                        cssInclude + "<div style=\"margin-top:50px;text-align:center\">VOLUME : " + itm.volumeName + "</div>"
-                    );
-                }
-
                 foreach (var itm2 in itm.chapterItems)
                 {
-                    writer.AddChapter(
-                        count.ToString() + ". " + itm2.chapterName,
-                        cssInclude + itm2.content.Replace("\r\n", "<br>").Replace("\n", "<br>")
-                    );
+                    book.ChapterDatas.Add(new EpubGenerator.ChapterData()
+                    {
+                        VolumeId = itm.volumeId,
+                        VolumeName = itm.volumeName,
+                        ChapterName = itm2.chapterName,
+                        ChapterContent = cssInclude + itm2.content.Replace("\r\n", "<br>").Replace("\n", "<br>"),
+                    });
                     count++;
                 }
             }
 
-            writer.Write(epubFilePath);
+            book.OnLog += (sender, log) =>
+            {
+                OnLog?.Invoke(this, log);
+            };
+
+            book.Write(epubFilePath);
             OnLog?.Invoke(this, "File saved to \"" + epubFilePath + "\"");
         }
     }

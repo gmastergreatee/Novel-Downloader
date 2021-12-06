@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webnovel", "Webnovel\Webnov
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{B5DCEC59-3C45-415D-872F-11EE791D141F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EpubGenerator", "EpubGenerator\EpubGenerator.csproj", "{D83DD956-02C2-4527-9A08-7D761B5BE292}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{B5DCEC59-3C45-415D-872F-11EE791D141F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5DCEC59-3C45-415D-872F-11EE791D141F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5DCEC59-3C45-415D-872F-11EE791D141F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D83DD956-02C2-4527-9A08-7D761B5BE292}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D83DD956-02C2-4527-9A08-7D761B5BE292}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D83DD956-02C2-4527-9A08-7D761B5BE292}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D83DD956-02C2-4527-9A08-7D761B5BE292}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
