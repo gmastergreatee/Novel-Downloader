@@ -21,6 +21,7 @@ namespace EpubGenerator
         public string Title { get; set; } = "";
         public string Author { get; set; } = "";
         public string Description { get; set; } = "";
+        public string ChapterEndHtml { get; set; } = "<div style=\"text-align:center;padding-top:30px;padding-bottom:100px\"><h3>-----x=X<--CHAPER-END->X=x-----<h3></div>";
 
         public event EventHandler<string> OnLog;
 
@@ -28,7 +29,7 @@ namespace EpubGenerator
 
         List<FileData> fileDatas { get; set; } = new List<FileData>();
 
-        public void Write(string filePath, bool AutoGenerateHtmlContainerForChapters = true)
+        public void Write(string filePath, bool AutoGenerateHtmlContainerForChapters = true, bool AddChapterEndHeader = true)
         {
             var chapCounter = 1;
             var volumes = ChapterDatas.Select(i => new { i.VolumeId, i.VolumeName }).Where(i => !string.IsNullOrWhiteSpace(i.VolumeName)).Distinct().ToList();
@@ -72,7 +73,7 @@ namespace EpubGenerator
                         volumeNameValid = true;
 
                     if (volumes.Count > 1 && volumeNameValid)
-                        tocHtml += $"\n{Tabs(3)}<li>\n{Tabs(4)}<a href=\"xhtml/{PadChapterCounter(chapCounter)}. {gp.FirstOrDefault().ChapterName.RemoveSpecialCharacters()}.xhtml\">{volumes.FirstOrDefault(i => i.VolumeId == gp.Key).VolumeName}</a>\n{Tabs(4)}<ol>";
+                        tocHtml += $"\n{Tabs(3)}<li>\n{Tabs(4)}<a href=\"{PadChapterCounter(chapCounter)}. {gp.FirstOrDefault().ChapterName.RemoveSpecialCharacters()}.xhtml\">{volumes.FirstOrDefault(i => i.VolumeId == gp.Key).VolumeName}</a>\n{Tabs(4)}<ol>";
 
                     foreach (var itm in gp)
                     {
@@ -83,10 +84,7 @@ namespace EpubGenerator
                             IsScripted = itm.ContainsScript,
                         };
 
-                        if (AutoGenerateHtmlContainerForChapters)
-                            fileData.PutString($"{htmlStart}\n<h2><u>{PadChapterCounter(chapCounter)}. {itm.ChapterName}</u></h2>\n{itm.ChapterContent.Replace("\t", "  ")}{htmlEnd}");
-                        else
-                            fileData.PutString($"\n<h2><u>{PadChapterCounter(chapCounter)}. {itm.ChapterName}</u></h2>\n{itm.ChapterContent}");
+                        fileData.PutString($"{(AutoGenerateHtmlContainerForChapters ? htmlStart : "")}\n<h2><u>{PadChapterCounter(chapCounter)}. {itm.ChapterName}</u></h2>\n{itm.ChapterContent.Replace("\t", "  ")}{(AddChapterEndHeader ? ChapterEndHtml : "")}{(AutoGenerateHtmlContainerForChapters ? htmlEnd : "")}");
 
                         fileDatas.Add(fileData);
 
