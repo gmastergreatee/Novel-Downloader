@@ -8,7 +8,7 @@ Download from [appveyor](https://ci.appveyor.com/project/gmastergreatee/novel-do
 
 ### Features
 - [x] Downloader
-- [ ] Library
+- [ ] Library (In progress)
 - [ ] Updater
 
 ### Supported Sites
