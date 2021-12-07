@@ -426,6 +426,7 @@ namespace Novel_Downloader
             var JavaScriptSerializer = new JavaScriptSerializer();
             return JavaScriptSerializer.Serialize(obj);
         }
+
         #endregion
     }
 }
