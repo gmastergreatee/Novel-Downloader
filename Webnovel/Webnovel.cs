@@ -156,19 +156,6 @@ namespace Webnovel
                         DownloaderId = "webnovel.com"
                     };
 
-                    #region Get Image URL
-                    try
-                    {
-                        var imageObj = dom.QuerySelectorAll("head meta[property='og:image']").FirstOrDefault();
-                        if (imageObj != null)
-                        {
-                            var imgUrl = imageObj.GetAttribute("content");
-                            if (!string.IsNullOrWhiteSpace(imgUrl))
-                                retThis.ImageUrl = imgUrl.ToString().Replace("/150/150", "/600/600").Replace("/quality/80", "/quality/40");
-                        }
-                    }
-                    catch { }
-                    #endregion
 
                     #region Get UniqueId & NovelUrl
                     IElement uIdObj = null;
@@ -197,6 +184,10 @@ namespace Webnovel
                     retThis.NovelUrl = url;
                     retThis.UniqueId = url.Substring(url.LastIndexOf("_") + 1);
 
+                    #endregion
+
+                    #region Get Image URL
+                    retThis.ImageUrl = "https://img.webnovel.com/bookcover/" + retThis.UniqueId + "/600/600.jpg";
                     #endregion
 
                     #region Get Title, Author & Chapters
