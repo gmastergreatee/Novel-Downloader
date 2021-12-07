@@ -28,9 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.TabMainControl = new System.Windows.Forms.TabControl();
+            this.TabLibraryPage = new System.Windows.Forms.TabPage();
+            this.libraryUserControl1 = new Novel_Downloader.LibraryUserControl();
+            this.TabDownloaderPage = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.label8 = new System.Windows.Forms.Label();
@@ -55,10 +56,9 @@
             this.txtConsole = new System.Windows.Forms.TextBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
-            this.libraryUserControl1 = new Novel_Downloader.LibraryUserControl();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
+            this.TabMainControl.SuspendLayout();
+            this.TabLibraryPage.SuspendLayout();
+            this.TabDownloaderPage.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -68,39 +68,47 @@
             this.tableLayoutPanel7.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tabControl1
+            // TabMainControl
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(13, 10);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 0, 0, 6);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(926, 420);
-            this.tabControl1.TabIndex = 0;
+            this.TabMainControl.Controls.Add(this.TabLibraryPage);
+            this.TabMainControl.Controls.Add(this.TabDownloaderPage);
+            this.TabMainControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TabMainControl.Location = new System.Drawing.Point(13, 10);
+            this.TabMainControl.Margin = new System.Windows.Forms.Padding(3, 0, 0, 6);
+            this.TabMainControl.Name = "TabMainControl";
+            this.TabMainControl.SelectedIndex = 0;
+            this.TabMainControl.Size = new System.Drawing.Size(926, 420);
+            this.TabMainControl.TabIndex = 0;
             // 
-            // tabPage1
+            // TabLibraryPage
             // 
-            this.tabPage1.Controls.Add(this.libraryUserControl1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(918, 391);
-            this.tabPage1.TabIndex = 1;
-            this.tabPage1.Text = "Library";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.TabLibraryPage.Controls.Add(this.libraryUserControl1);
+            this.TabLibraryPage.Location = new System.Drawing.Point(4, 25);
+            this.TabLibraryPage.Name = "TabLibraryPage";
+            this.TabLibraryPage.Padding = new System.Windows.Forms.Padding(3);
+            this.TabLibraryPage.Size = new System.Drawing.Size(918, 391);
+            this.TabLibraryPage.TabIndex = 1;
+            this.TabLibraryPage.Text = "Library";
+            this.TabLibraryPage.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // libraryUserControl1
             // 
-            this.tabPage2.Controls.Add(this.tableLayoutPanel1);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(918, 391);
-            this.tabPage2.TabIndex = 0;
-            this.tabPage2.Text = "Downloader";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.libraryUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.libraryUserControl1.Location = new System.Drawing.Point(3, 3);
+            this.libraryUserControl1.Name = "libraryUserControl1";
+            this.libraryUserControl1.Size = new System.Drawing.Size(912, 385);
+            this.libraryUserControl1.TabIndex = 0;
+            // 
+            // TabDownloaderPage
+            // 
+            this.TabDownloaderPage.Controls.Add(this.tableLayoutPanel1);
+            this.TabDownloaderPage.Location = new System.Drawing.Point(4, 25);
+            this.TabDownloaderPage.Name = "TabDownloaderPage";
+            this.TabDownloaderPage.Padding = new System.Windows.Forms.Padding(3);
+            this.TabDownloaderPage.Size = new System.Drawing.Size(918, 391);
+            this.TabDownloaderPage.TabIndex = 0;
+            this.TabDownloaderPage.Text = "Downloader";
+            this.TabDownloaderPage.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanel1
             // 
@@ -451,7 +459,7 @@
             this.tableLayoutPanel7.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel7.ColumnCount = 1;
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel7.Controls.Add(this.tabControl1, 0, 0);
+            this.tableLayoutPanel7.Controls.Add(this.TabMainControl, 0, 0);
             this.tableLayoutPanel7.Controls.Add(this.txtConsole, 0, 1);
             this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel7.Location = new System.Drawing.Point(0, 0);
@@ -462,14 +470,6 @@
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel7.Size = new System.Drawing.Size(949, 596);
             this.tableLayoutPanel7.TabIndex = 1;
-            // 
-            // libraryUserControl1
-            // 
-            this.libraryUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.libraryUserControl1.Location = new System.Drawing.Point(3, 3);
-            this.libraryUserControl1.Name = "libraryUserControl1";
-            this.libraryUserControl1.Size = new System.Drawing.Size(912, 385);
-            this.libraryUserControl1.TabIndex = 0;
             // 
             // MainForm
             // 
@@ -482,10 +482,10 @@
             this.Text = "Novel-Downloader";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.SizeChanged += new System.EventHandler(this.MainForm_SizeChanged);
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
+            this.TabMainControl.ResumeLayout(false);
+            this.TabLibraryPage.ResumeLayout(false);
+            this.TabDownloaderPage.ResumeLayout(false);
+            this.TabDownloaderPage.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
@@ -506,9 +506,9 @@
 
         #endregion
 
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabControl TabMainControl;
+        private System.Windows.Forms.TabPage TabDownloaderPage;
+        private System.Windows.Forms.TabPage TabLibraryPage;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Button btnCheck;

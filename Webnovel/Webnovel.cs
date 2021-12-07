@@ -156,7 +156,6 @@ namespace Webnovel
                         DownloaderId = "webnovel.com"
                     };
 
-
                     #region Get UniqueId & NovelUrl
                     IElement uIdObj = null;
                     try

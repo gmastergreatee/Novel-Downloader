@@ -16,11 +16,6 @@ namespace Novel_Downloader
 
         NovelInfo novelInfo { get; set; } = null;
 
-        IEnumerable<IDownloader> downloaders = new List<IDownloader>()
-        {
-            new Webnovel.Webnovel(),
-        };
-
         IDownloader currentDownloader { get; set; } = null;
         List<ChapterInfo> chapterInfos { get; set; } = null;
         List<ChapterInfo> errorChapterInfos { get; set; } = null;
@@ -230,14 +225,10 @@ namespace Novel_Downloader
 
             var novelUrl = txtURL.Text;
 
-            foreach (var itm in downloaders)
-            {
-                if (itm.UrlMatch(novelUrl))
-                {
-                    currentDownloader = itm;
-                    break;
-                }
-            }
+            // remove eventHandlers from old dowwoaders
+            RemoveHandlers();
+
+            currentDownloader = Downloaders.GetValidDownloader(novelUrl);
 
             if (currentDownloader == null)
             {
@@ -245,6 +236,9 @@ namespace Novel_Downloader
                 txtConsole.AppendText("Oops! No matching downloaders found." + Environment.NewLine);
                 return;
             }
+
+            AddHandlers();
+
             // reset client to remove old data
             currentDownloader.ResetClient();
 
@@ -294,6 +288,21 @@ namespace Novel_Downloader
             catch { }
         }
 
+        private void TabChanged(object sender, EventArgs e)
+        {
+            RemoveHandlers();
+            libraryUserControl1.RemoveHandlers();
+
+            if (TabMainControl.SelectedTab == TabDownloaderPage)
+            {
+                AddHandlers();
+            }
+            else if (TabMainControl.SelectedTab == TabLibraryPage)
+            {
+                libraryUserControl1.AddHandlers();
+            }
+        }
+
         #endregion
 
         #region Helper Methods
@@ -302,24 +311,13 @@ namespace Novel_Downloader
         {
             txtURL.Text = "https://www.webnovel.com/book/dc's-ghost_20461293705507605";
 
-            foreach (var itm in downloaders)
-            {
-                itm.OnLog += OnLog;
-
-                itm.OnNovelInfoFetchSuccess += OnNovelInfoFetchSuccess;
-                itm.OnNovelInfoFetchError += OnNovelInfoFetchError;
-
-                itm.OnChapterListFetchSuccess += OnChapterListFetchSuccess;
-                itm.OnChapterListFetchError += OnChapterListFetchError;
-
-                itm.OnChapterDataFetchSuccess += OnChapterDataFetchSuccess;
-                itm.OnChapterDataFetchError += OnChapterDataFetchError;
-            }
-
             folderBrowserDialog1.Description = "Select the folder where novel-data will be downloaded";
             folderBrowserDialog1.ShowNewFolderButton = true;
 
             pictureBox1.LoadCompleted += ImageLoaded;
+            TabMainControl.SelectedIndexChanged += TabChanged;
+
+            libraryUserControl1.RedirectLogTo(txtConsole);
         }
 
         string ParseExceptionMessage(Exception ex)
@@ -426,6 +424,49 @@ namespace Novel_Downloader
             var JavaScriptSerializer = new JavaScriptSerializer();
             return JavaScriptSerializer.Serialize(obj);
         }
+
+        void RemoveHandlers()
+        {
+            if (currentDownloader != null)
+            {
+                try
+                {
+                    currentDownloader.OnLog -= OnLog;
+
+                    currentDownloader.OnNovelInfoFetchSuccess -= OnNovelInfoFetchSuccess;
+                    currentDownloader.OnNovelInfoFetchError -= OnNovelInfoFetchError;
+
+                    currentDownloader.OnChapterListFetchSuccess -= OnChapterListFetchSuccess;
+                    currentDownloader.OnChapterListFetchError -= OnChapterListFetchError;
+
+                    currentDownloader.OnChapterDataFetchSuccess -= OnChapterDataFetchSuccess;
+                    currentDownloader.OnChapterDataFetchError -= OnChapterDataFetchError;
+                }
+                catch { }
+            }
+        }
+
+        void AddHandlers()
+        {
+            if (currentDownloader != null)
+            {
+                try
+                {
+                    currentDownloader.OnLog += OnLog;
+
+                    currentDownloader.OnNovelInfoFetchSuccess += OnNovelInfoFetchSuccess;
+                    currentDownloader.OnNovelInfoFetchError += OnNovelInfoFetchError;
+
+                    currentDownloader.OnChapterListFetchSuccess += OnChapterListFetchSuccess;
+                    currentDownloader.OnChapterListFetchError += OnChapterListFetchError;
+
+                    currentDownloader.OnChapterDataFetchSuccess += OnChapterDataFetchSuccess;
+                    currentDownloader.OnChapterDataFetchError += OnChapterDataFetchError;
+                }
+                catch { }
+            }
+        }
+
 
         #endregion
     }
