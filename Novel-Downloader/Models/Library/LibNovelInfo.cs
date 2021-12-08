@@ -17,5 +17,6 @@ namespace Novel_Downloader.Models.Library
         public int ChapterCount { get; set; } = 0;
         public string CurrentChapter { get; set; } = "";
         public string LatestChapter { get; set; } = "";
+        public string Description { get; set; } = "";
     }
 }

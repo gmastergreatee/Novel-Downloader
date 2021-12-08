@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core;
+using System;
 using System.IO;
 using System.Linq;
 using Core.Models;
@@ -6,7 +7,6 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Web.Script.Serialization;
 
 namespace Novel_Downloader
 {
@@ -97,7 +97,7 @@ namespace Novel_Downloader
                 OnLog(sender, "Saving novel-info...");
                 try
                 {
-                    File.WriteAllText(Path.Combine(TargetPath, "data", "info.json"), SerializeJson(novelInfo));
+                    File.WriteAllText(Path.Combine(TargetPath, "data", "info.json"), JsonUtils.SerializeJson(novelInfo));
                 }
                 catch
                 {
@@ -109,7 +109,7 @@ namespace Novel_Downloader
                 OnLog(sender, "Saving chapter-list...");
                 try
                 {
-                    File.WriteAllText(Path.Combine(TargetPath, "data", "list.json"), SerializeJson(chapterInfos));
+                    File.WriteAllText(Path.Combine(TargetPath, "data", "list.json"), JsonUtils.SerializeJson(chapterInfos));
                 }
                 catch
                 {
@@ -192,7 +192,7 @@ namespace Novel_Downloader
         {
             try
             {
-                File.WriteAllText(Path.Combine(TargetPath, "data", e.Index + ".json"), SerializeJson(e));
+                File.WriteAllText(Path.Combine(TargetPath, "data", e.Index + ".json"), JsonUtils.SerializeJson(e));
                 chapterDatas.Add(e);
 
                 Invoke(new Action(() =>
@@ -225,8 +225,24 @@ namespace Novel_Downloader
 
             var novelUrl = txtURL.Text;
 
-            // remove eventHandlers from old dowwoaders
-            RemoveHandlers();
+            // remove event handlers
+            if (currentDownloader != null)
+            {
+                try
+                {
+                    currentDownloader.OnLog -= OnLog;
+
+                    currentDownloader.OnNovelInfoFetchSuccess -= OnNovelInfoFetchSuccess;
+                    currentDownloader.OnNovelInfoFetchError -= OnNovelInfoFetchError;
+
+                    currentDownloader.OnChapterListFetchSuccess -= OnChapterListFetchSuccess;
+                    currentDownloader.OnChapterListFetchError -= OnChapterListFetchError;
+
+                    currentDownloader.OnChapterDataFetchSuccess -= OnChapterDataFetchSuccess;
+                    currentDownloader.OnChapterDataFetchError -= OnChapterDataFetchError;
+                }
+                catch { }
+            }
 
             currentDownloader = Downloaders.GetValidDownloader(novelUrl);
 
@@ -237,7 +253,19 @@ namespace Novel_Downloader
                 return;
             }
 
-            AddHandlers();
+            // add event handlers
+            {
+                currentDownloader.OnLog += OnLog;
+
+                currentDownloader.OnNovelInfoFetchSuccess += OnNovelInfoFetchSuccess;
+                currentDownloader.OnNovelInfoFetchError += OnNovelInfoFetchError;
+
+                currentDownloader.OnChapterListFetchSuccess += OnChapterListFetchSuccess;
+                currentDownloader.OnChapterListFetchError += OnChapterListFetchError;
+
+                currentDownloader.OnChapterDataFetchSuccess += OnChapterDataFetchSuccess;
+                currentDownloader.OnChapterDataFetchError += OnChapterDataFetchError;
+            }
 
             // reset client to remove old data
             currentDownloader.ResetClient();
@@ -287,22 +315,7 @@ namespace Novel_Downloader
             }
             catch { }
         }
-
-        private void TabChanged(object sender, EventArgs e)
-        {
-            RemoveHandlers();
-            libraryUserControl1.RemoveHandlers();
-
-            if (TabMainControl.SelectedTab == TabDownloaderPage)
-            {
-                AddHandlers();
-            }
-            else if (TabMainControl.SelectedTab == TabLibraryPage)
-            {
-                libraryUserControl1.AddHandlers();
-            }
-        }
-
+        
         #endregion
 
         #region Helper Methods
@@ -315,9 +328,6 @@ namespace Novel_Downloader
             folderBrowserDialog1.ShowNewFolderButton = true;
 
             pictureBox1.LoadCompleted += ImageLoaded;
-            TabMainControl.SelectedIndexChanged += TabChanged;
-
-            libraryUserControl1.RedirectLogTo(txtConsole);
         }
 
         string ParseExceptionMessage(Exception ex)
@@ -418,55 +428,6 @@ namespace Novel_Downloader
 
             TargetPath = path;
         }
-
-        string SerializeJson(object obj)
-        {
-            var JavaScriptSerializer = new JavaScriptSerializer();
-            return JavaScriptSerializer.Serialize(obj);
-        }
-
-        void RemoveHandlers()
-        {
-            if (currentDownloader != null)
-            {
-                try
-                {
-                    currentDownloader.OnLog -= OnLog;
-
-                    currentDownloader.OnNovelInfoFetchSuccess -= OnNovelInfoFetchSuccess;
-                    currentDownloader.OnNovelInfoFetchError -= OnNovelInfoFetchError;
-
-                    currentDownloader.OnChapterListFetchSuccess -= OnChapterListFetchSuccess;
-                    currentDownloader.OnChapterListFetchError -= OnChapterListFetchError;
-
-                    currentDownloader.OnChapterDataFetchSuccess -= OnChapterDataFetchSuccess;
-                    currentDownloader.OnChapterDataFetchError -= OnChapterDataFetchError;
-                }
-                catch { }
-            }
-        }
-
-        void AddHandlers()
-        {
-            if (currentDownloader != null)
-            {
-                try
-                {
-                    currentDownloader.OnLog += OnLog;
-
-                    currentDownloader.OnNovelInfoFetchSuccess += OnNovelInfoFetchSuccess;
-                    currentDownloader.OnNovelInfoFetchError += OnNovelInfoFetchError;
-
-                    currentDownloader.OnChapterListFetchSuccess += OnChapterListFetchSuccess;
-                    currentDownloader.OnChapterListFetchError += OnChapterListFetchError;
-
-                    currentDownloader.OnChapterDataFetchSuccess += OnChapterDataFetchSuccess;
-                    currentDownloader.OnChapterDataFetchError += OnChapterDataFetchError;
-                }
-                catch { }
-            }
-        }
-
 
         #endregion
     }

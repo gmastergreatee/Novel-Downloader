@@ -21,7 +21,7 @@ namespace EpubGenerator
         public string Title { get; set; } = "";
         public string Author { get; set; } = "";
         public string Description { get; set; } = "";
-        public string ChapterEndHtml { get; set; } = "<div style=\"text-align:center;padding-top:30px;padding-bottom:100px\"><h3>-----x=X<--CHAPER-END->X=x-----<h3></div>";
+        public string ChapterEndHtml { get; set; } = "<div style=\"text-align:center;padding-top:30px;padding-bottom:100px\"><h3>-----x=X<CHAPTER-END>X=x-----<h3></div>";
 
         public event EventHandler<string> OnLog;
 
@@ -198,7 +198,7 @@ namespace EpubGenerator
             fileDatas.Add(fileData);
         }
 
-        string PadChapterCounter(int chapterNumber)
+        private string PadChapterCounter(int chapterNumber)
         {
             var length = ChapterDatas.Count.ToString().Length;
             var retThis = chapterNumber.ToString();
@@ -207,7 +207,7 @@ namespace EpubGenerator
             return retThis;
         }
 
-        string Tabs(int count = 1)
+        private static string Tabs(int count = 1)
         {
             var tab = "\t";
             while (tab.Length < count)

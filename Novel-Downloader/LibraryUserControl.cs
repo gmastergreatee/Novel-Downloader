@@ -9,119 +9,54 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using Core.Models;
+using Novel_Downloader.Models.Library;
 
 namespace Novel_Downloader
 {
     public partial class LibraryUserControl : UserControl
     {
-        readonly string CWD;
-        TextBox txtConsole = null;
-
         IDownloader currentDownloader = null;
 
         public LibraryUserControl()
         {
             InitializeComponent();
-            CWD = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
 
             tblNovelList.RowStyles.Clear();
             tblNovelList.RowStyles.Add(new RowStyle(SizeType.Absolute, 70));
         }
 
-        public void RedirectLogTo(TextBox txtConsole)
-        {
-            this.txtConsole = txtConsole;
-        }
-
-        public void SetLoading(bool value)
+        private void SetLoading(bool value)
         {
             pLoading.Visible = value;
         }
 
-        void LoadLibrary()
+        void LoadLibrary(List<LibNovelInfo> novelInfos)
         {
-
-        }
-
-
-        public void RemoveHandlers()
-        {
-            if (currentDownloader != null)
+            var novelCount = 0;
+            SetLoading(true);
+            tblNovelList.Controls.Clear();
+            new Task(() =>
             {
-                try
+                if (novelInfos != null)
                 {
-                    currentDownloader.OnLog -= OnLog;
+                    foreach (var info in novelInfos)
+                    {
 
-                    currentDownloader.OnNovelInfoFetchSuccess -= OnNovelInfoFetchSuccess;
-                    currentDownloader.OnNovelInfoFetchError -= OnNovelInfoFetchError;
-
-                    currentDownloader.OnChapterListFetchSuccess -= OnChapterListFetchSuccess;
-                    currentDownloader.OnChapterListFetchError -= OnChapterListFetchError;
-
-                    currentDownloader.OnChapterDataFetchSuccess -= OnChapterDataFetchSuccess;
-                    currentDownloader.OnChapterDataFetchError -= OnChapterDataFetchError;
+                        novelCount++;
+                    }
                 }
-                catch { }
-            }
-        }
 
-        public void AddHandlers()
-        {
-            if (currentDownloader != null)
-            {
-                try
+                Invoke(new Action(() =>
                 {
-                    currentDownloader.OnLog += OnLog;
-
-                    currentDownloader.OnNovelInfoFetchSuccess += OnNovelInfoFetchSuccess;
-                    currentDownloader.OnNovelInfoFetchError += OnNovelInfoFetchError;
-
-                    currentDownloader.OnChapterListFetchSuccess += OnChapterListFetchSuccess;
-                    currentDownloader.OnChapterListFetchError += OnChapterListFetchError;
-
-                    currentDownloader.OnChapterDataFetchSuccess += OnChapterDataFetchSuccess;
-                    currentDownloader.OnChapterDataFetchError += OnChapterDataFetchError;
-                }
-                catch { }
-            }
+                    SetLoading(false);
+                    pEmptyLibrary.Visible = novelCount <= 0;
+                }));
+            }).Start();
         }
 
         #region Downloader Events
 
-        private void OnLog(object sender, string e)
-        {
-            throw new NotImplementedException();
-        }
 
-        private void OnChapterDataFetchError(object sender, ChapterDataFetchError e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void OnChapterDataFetchSuccess(object sender, ChapterData e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void OnChapterListFetchError(object sender, Exception e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void OnChapterListFetchSuccess(object sender, List<ChapterInfo> e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void OnNovelInfoFetchError(object sender, Exception e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void OnNovelInfoFetchSuccess(object sender, NovelInfo e)
-        {
-            throw new NotImplementedException();
-        }
 
         #endregion
 

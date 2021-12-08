@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core;
+using System;
 using System.IO;
 using System.Net;
 using AngleSharp;
@@ -7,16 +8,15 @@ using Core.Models;
 using AngleSharp.Dom;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Web.Script.Serialization;
 
 namespace Webnovel
 {
     public class Webnovel : IDownloader
     {
-        string uuid = "";
-        string csrfToken = "";
-        NovelInfo novelInfo = null;
-        Models.BookInfoResponse.BookInfoResponse bookInfoResp = null;
+        private string _uuid = "";
+        private string _csrfToken = "";
+        private NovelInfo _novelInfo;
+        private Models.BookInfoResponse.BookInfoResponse _bookInfoResp;
 
         public Webnovel()
         {
@@ -40,14 +40,14 @@ namespace Webnovel
 
             try
             {
-                var html = "";
+                string html;
                 try
                 {
-                    var req = WebRequest.Create("https://www.webnovel.com/go/pcm/chapter/getContent?_csrfToken=" + csrfToken + "&bookId=" + bookInfoResp.data.bookInfo.bookId + "&chapterId=" + chapterInfo.ChapterUrl);
+                    var req = WebRequest.Create("https://www.webnovel.com/go/pcm/chapter/getContent?_csrfToken=" + _csrfToken + "&bookId=" + _bookInfoResp.data.bookInfo.bookId + "&chapterId=" + chapterInfo.ChapterUrl);
                     req.Method = WebRequestMethods.Http.Get;
-                    req.Headers.Add("cookie", "_csrfToken=" + csrfToken + "; webnovel_uuid=" + uuid);
+                    req.Headers.Add("cookie", "_csrfToken=" + _csrfToken + "; webnovel_uuid=" + _uuid);
                     var resp = req.GetResponse();
-                    using (var textReader = new StreamReader(resp.GetResponseStream()))
+                    using (var textReader = new StreamReader(resp.GetResponseStream() ?? throw new Exception("Error getting chapter stream")))
                     {
                         html = textReader.ReadToEnd();
                     }
@@ -57,11 +57,11 @@ namespace Webnovel
                     throw new Exception("Error fetching chapter-data");
                 }
 
-                Models.ChapterInfoResponse.ChapterInfoResponse chapterDataResp = null;
+                Models.ChapterInfoResponse.ChapterInfoResponse chapterDataResp;
 
                 try
                 {
-                    chapterDataResp = DeserializeJson<Models.ChapterInfoResponse.ChapterInfoResponse>(html);
+                    chapterDataResp = JsonUtils.DeserializeJson<Models.ChapterInfoResponse.ChapterInfoResponse>(html);
                 }
                 catch
                 {
@@ -79,8 +79,8 @@ namespace Webnovel
                         chapterData.Content += Environment.NewLine;
                 }
 
-                var chapterItem_BookInfoResponse = bookInfoResp.data.volumeItems.SelectMany(i => i.chapterItems);
-                var currentItem = chapterItem_BookInfoResponse.FirstOrDefault(i => i.chapterId == chapterInfo.ChapterUrl);
+                var chapterItemBookInfoResponse = _bookInfoResp.data.volumeItems.SelectMany(i => i.chapterItems);
+                var currentItem = chapterItemBookInfoResponse.FirstOrDefault(i => i.chapterId == chapterInfo.ChapterUrl);
                 if (currentItem != null)
                 {
                     currentItem.content = chapterData.Content;
@@ -103,7 +103,7 @@ namespace Webnovel
         {
             var count = 0;
             var chapters = new List<ChapterInfo>();
-            foreach (var itm in bookInfoResp.data.volumeItems)
+            foreach (var itm in _bookInfoResp.data.volumeItems)
             {
                 foreach (var itm2 in itm.chapterItems)
                 {
@@ -124,24 +124,25 @@ namespace Webnovel
 
         public void FetchNovelInfo(string novelUrl)
         {
+            // ReSharper disable once AsyncVoidLambda
             new Task(async () =>
             {
                 try
                 {
                     var req = WebRequest.Create(novelUrl);
                     req.Method = WebRequestMethods.Http.Get;
-                    var resp = req.GetResponse();
-                    var html = "";
-                    using (var textReader = new StreamReader(resp.GetResponseStream()))
+                    var resp = await req.GetResponseAsync();
+                    string html;
+                    using (var textReader = new StreamReader(resp.GetResponseStream() ?? throw new Exception("No data received for novel")))
                     {
-                        html = textReader.ReadToEnd();
+                        html = await textReader.ReadToEndAsync();
                     }
 
                     #region Set csrfToken & uuid
                     try
                     {
-                        csrfToken = resp.Headers.GetValues("Set-Cookie").FirstOrDefault(i => i.ToLower().Contains("csrftoken")).Replace("; ", ";").Split(';').FirstOrDefault(i => i.ToLower().Contains("csrftoken")).Split('=')[1];
-                        uuid = resp.Headers.GetValues("Set-Cookie").FirstOrDefault(i => i.ToLower().Contains("webnovel_uuid")).Replace("; ", ";").Split(';').FirstOrDefault(i => i.ToLower().Contains("webnovel_uuid")).Split('=')[1];
+                        _csrfToken = resp.Headers.GetValues("Set-Cookie").FirstOrDefault(i => i.ToLower().Contains("csrftoken")).Replace("; ", ";").Split(';').FirstOrDefault(i => i.ToLower().Contains("csrftoken")).Split('=')[1];
+                        _uuid = resp.Headers.GetValues("Set-Cookie").FirstOrDefault(i => i.ToLower().Contains("webnovel_uuid")).Replace("; ", ";").Split(';').FirstOrDefault(i => i.ToLower().Contains("webnovel_uuid")).Split('=')[1];
                     }
                     catch
                     {
@@ -157,7 +158,7 @@ namespace Webnovel
                     };
 
                     #region Get UniqueId & NovelUrl
-                    IElement uIdObj = null;
+                    IElement uIdObj;
                     try
                     {
                         uIdObj = dom.QuerySelectorAll("head meta[property='og:url']").FirstOrDefault();
@@ -167,7 +168,7 @@ namespace Webnovel
                         throw new Exception("Error fetching NovelURL & UniqueId");
                     }
 
-                    string url = "";
+                    string url;
                     try
                     {
                         url = uIdObj.GetAttribute("content");
@@ -194,14 +195,14 @@ namespace Webnovel
                     try
                     {
                         OnLog?.Invoke(this, "Fetching chapter list");
-                        req = WebRequest.Create("https://www.webnovel.com/go/pcm/chapter/get-chapter-list?_csrfToken=" + csrfToken + "&bookId=" + retThis.UniqueId);
+                        req = WebRequest.Create("https://www.webnovel.com/go/pcm/chapter/get-chapter-list?_csrfToken=" + _csrfToken + "&bookId=" + retThis.UniqueId);
                         req.Method = WebRequestMethods.Http.Get;
-                        req.Headers.Add("cookie", "_csrfToken=" + csrfToken + "; webnovel_uuid=" + uuid);
+                        req.Headers.Add("cookie", "_csrfToken=" + _csrfToken + "; webnovel_uuid=" + _uuid);
                         html = "";
-                        resp = req.GetResponse();
-                        using (var textReader = new StreamReader(resp.GetResponseStream()))
+                        resp = await req.GetResponseAsync();
+                        using (var textReader = new StreamReader(resp.GetResponseStream() ?? throw new Exception("No data received for novel")))
                         {
-                            html = textReader.ReadToEnd();
+                            html = await textReader.ReadToEndAsync();
                         }
                     }
                     catch
@@ -211,12 +212,12 @@ namespace Webnovel
 
                     try
                     {
-                        bookInfoResp = DeserializeJson<Models.BookInfoResponse.BookInfoResponse>(html);
-                        if (bookInfoResp.code != 0)
+                        _bookInfoResp = JsonUtils.DeserializeJson<Models.BookInfoResponse.BookInfoResponse>(html);
+                        if (_bookInfoResp.code != 0)
                             throw new Exception("Invalid chapter list code returned");
-                        retThis.Title = bookInfoResp.data.bookInfo.bookName;
-                        retThis.Author = bookInfoResp.data.bookInfo.authorName;
-                        retThis.ChapterCount = bookInfoResp.data.bookInfo.totalChapterNum;
+                        retThis.Title = _bookInfoResp.data.bookInfo.bookName;
+                        retThis.Author = _bookInfoResp.data.bookInfo.authorName;
+                        retThis.ChapterCount = _bookInfoResp.data.bookInfo.totalChapterNum;
                         OnLog?.Invoke(this, "Done");
                     }
                     catch
@@ -226,7 +227,7 @@ namespace Webnovel
 
                     #endregion
 
-                    novelInfo = retThis.Copy();
+                    _novelInfo = retThis.Copy();
 
                     OnNovelInfoFetchSuccess?.Invoke(this, retThis);
                 }
@@ -239,10 +240,10 @@ namespace Webnovel
 
         public void ResetClient()
         {
-            uuid = "";
-            csrfToken = "";
-            novelInfo = null;
-            bookInfoResp = null;
+            _uuid = "";
+            _csrfToken = "";
+            _novelInfo = null;
+            _bookInfoResp = null;
         }
 
         public bool UrlMatch(string novelUrl)
@@ -254,24 +255,26 @@ namespace Webnovel
         {
             OnLog?.Invoke(this, "Generating EPUB file...");
 
-            var epubFileName = novelInfo.Author + " - " + novelInfo.Title + ".epub";
+            var epubFileName = _novelInfo.Author + " - " + _novelInfo.Title + ".epub";
             var invalidPathChars = Path.GetInvalidFileNameChars().Union(Path.GetInvalidPathChars()).ToList();
-            foreach (var ch in invalidPathChars)
-            {
-                epubFileName = epubFileName.Replace(ch.ToString(), "");
-            }
+
+            epubFileName = invalidPathChars.Aggregate(
+                epubFileName, 
+                (current, ch) => 
+                    current.Replace(ch.ToString(), "")
+            );
+
             var epubFilePath = Path.Combine(targetPath, epubFileName);
 
-            EpubGenerator.Ebook book = new EpubGenerator.Ebook()
+            var book = new EpubGenerator.Ebook()
             {
-                Title = novelInfo.Title,
-                Author = novelInfo.Author,
+                Title = _novelInfo.Title,
+                Author = _novelInfo.Author,
             };
 
-            byte[] imageBytes = null;
             if (File.Exists(Path.Combine(targetPath, "data", "image.jpg")))
             {
-                imageBytes = File.ReadAllBytes(Path.Combine(targetPath, "data", "image.jpg"));
+                var imageBytes = File.ReadAllBytes(Path.Combine(targetPath, "data", "image.jpg"));
                 var fData = new EpubGenerator.FileData()
                 {
                     FileName = "image.jpeg",
@@ -282,6 +285,7 @@ namespace Webnovel
                 book.AddFile(fData);
             }
 
+            // adding stylesheet
             {
                 var styleSheet = new EpubGenerator.FileData()
                 {
@@ -291,10 +295,9 @@ namespace Webnovel
                 styleSheet.PutString("pirate{display:none}");
                 book.AddFile(styleSheet);
             }
-            var cssInclude = "<link rel=\"stylesheet\" href=\"../css/style.css\" >";
+            const string cssInclude = "<link rel=\"stylesheet\" href=\"../css/style.css\" >";
 
-            var count = 1;
-            foreach (var itm in bookInfoResp.data.volumeItems)
+            foreach (var itm in _bookInfoResp.data.volumeItems)
             {
                 foreach (var itm2 in itm.chapterItems)
                 {
@@ -305,7 +308,6 @@ namespace Webnovel
                         ChapterName = itm2.chapterName,
                         ChapterContent = cssInclude + itm2.content.Replace("\r\n", "<br>").Replace("\n", "<br>"),
                     });
-                    count++;
                 }
             }
 
@@ -318,10 +320,5 @@ namespace Webnovel
             OnLog?.Invoke(this, "File saved to \"" + epubFilePath + "\"");
         }
 
-        T DeserializeJson<T>(string Json)
-        {
-            var JavaScriptSerializer = new JavaScriptSerializer();
-            return JavaScriptSerializer.Deserialize<T>(Json);
-        }
     }
 }
