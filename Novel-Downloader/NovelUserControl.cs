@@ -19,7 +19,10 @@ namespace Novel_Downloader
 
         private string Description
         {
-            set => toolTip1.SetToolTip(panel1, value);
+            set
+            {
+                toolTip1.SetToolTip(panel1, value);
+            }
         }
     }
 }
