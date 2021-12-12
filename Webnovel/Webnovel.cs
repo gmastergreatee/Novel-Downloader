@@ -133,7 +133,7 @@ namespace Webnovel
                     req.Method = WebRequestMethods.Http.Get;
                     var resp = await req.GetResponseAsync();
                     string html;
-                    using (var textReader = new StreamReader(resp.GetResponseStream() ?? throw new Exception("No data received for novel")))
+                    using (var textReader = new StreamReader(resp.GetResponseStream()))
                     {
                         html = await textReader.ReadToEndAsync();
                     }
@@ -200,7 +200,7 @@ namespace Webnovel
                         req.Headers.Add("cookie", "_csrfToken=" + _csrfToken + "; webnovel_uuid=" + _uuid);
                         html = "";
                         resp = await req.GetResponseAsync();
-                        using (var textReader = new StreamReader(resp.GetResponseStream() ?? throw new Exception("No data received for novel")))
+                        using (var textReader = new StreamReader(resp.GetResponseStream()))
                         {
                             html = await textReader.ReadToEndAsync();
                         }
