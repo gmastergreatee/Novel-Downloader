@@ -259,8 +259,8 @@ namespace Webnovel
             var invalidPathChars = Path.GetInvalidFileNameChars().Union(Path.GetInvalidPathChars()).ToList();
 
             epubFileName = invalidPathChars.Aggregate(
-                epubFileName, 
-                (current, ch) => 
+                epubFileName,
+                (current, ch) =>
                     current.Replace(ch.ToString(), "")
             );
 
