@@ -4,7 +4,7 @@
 
 Windows only (Dotnet 4.6.1)
 
-Download from [appveyor](https://ci.appveyor.com/project/gmastergreatee/novel-downloader/build/artifacts)
+Download from [releases](https://github.com/gmastergreatee/Novel-Downloader/releases)
 
 ### Features
 - [x] Downloader
