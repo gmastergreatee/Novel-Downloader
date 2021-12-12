@@ -16,5 +16,10 @@ namespace Novel_Downloader
         {
             InitializeComponent();
         }
+
+        private string Description
+        {
+            set => toolTip1.SetToolTip(panel1, value);
+        }
     }
 }

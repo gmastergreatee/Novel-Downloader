@@ -41,6 +41,8 @@ namespace Novel_Downloader
                 {
                     foreach (var info in novelInfos)
                     {
+                        var novelUserCtrl = new NovelUserControl();
+                        novelUserCtrl.Dock = DockStyle.Fill;
 
                         novelCount++;
                     }
