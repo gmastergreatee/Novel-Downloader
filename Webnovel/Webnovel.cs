@@ -47,7 +47,7 @@ namespace Webnovel
                     req.Method = WebRequestMethods.Http.Get;
                     req.Headers.Add("cookie", "_csrfToken=" + _csrfToken + "; webnovel_uuid=" + _uuid);
                     var resp = req.GetResponse();
-                    using (var textReader = new StreamReader(resp.GetResponseStream() ?? throw new Exception("Error getting chapter stream")))
+                    using (var textReader = new StreamReader(resp.GetResponseStream()))
                     {
                         html = textReader.ReadToEnd();
                     }
