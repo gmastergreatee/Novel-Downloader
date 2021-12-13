@@ -6,6 +6,7 @@ using AngleSharp;
 using System.Linq;
 using Core.Models;
 using AngleSharp.Dom;
+using Core.Models.Library;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -197,7 +198,6 @@ namespace Webnovel
 
                     try
                     {
-                        OnLog?.Invoke(this, "Fetching chapter list");
                         req = WebRequest.Create("https://www.webnovel.com/go/pcm/chapter/get-chapter-list?_csrfToken=" + _csrfToken + "&bookId=" + retThis.UniqueId);
                         req.Method = WebRequestMethods.Http.Get;
                         req.Headers.Add("cookie", "_csrfToken=" + _csrfToken + "; webnovel_uuid=" + _uuid);
@@ -221,7 +221,6 @@ namespace Webnovel
                         retThis.Title = _bookInfoResp.data.bookInfo.bookName;
                         retThis.Author = _bookInfoResp.data.bookInfo.authorName;
                         retThis.ChapterCount = _bookInfoResp.data.bookInfo.totalChapterNum;
-                        OnLog?.Invoke(this, "Done");
                     }
                     catch
                     {
@@ -321,10 +320,5 @@ namespace Webnovel
         }
 
         #endregion
-
-        public void LoadInfo(NovelInfo asd)
-        {
-
-        }
     }
 }

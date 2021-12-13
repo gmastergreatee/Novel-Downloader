@@ -48,6 +48,7 @@
     <Compile Include="Models\ChapterDataFetchError.cs" />
     <Compile Include="Models\ChapterInfo.cs" />
     <Compile Include="Models\IDownloader.cs" />
+    <Compile Include="Models\Library\LibNovelInfo.cs" />
     <Compile Include="Models\NovelInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

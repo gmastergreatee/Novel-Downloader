@@ -37,6 +37,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.btnAddNovel = new System.Windows.Forms.Button();
+            this.btnUpdateInfos = new System.Windows.Forms.Button();
             this.pLoading.SuspendLayout();
             this.pEmptyLibrary.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -55,10 +56,11 @@
             this.tblNovelList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblNovelList.Location = new System.Drawing.Point(6, 3);
             this.tblNovelList.Name = "tblNovelList";
+            this.tblNovelList.Padding = new System.Windows.Forms.Padding(0, 3, 0, 6);
             this.tblNovelList.RowCount = 2;
             this.tblNovelList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblNovelList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblNovelList.Size = new System.Drawing.Size(744, 0);
+            this.tblNovelList.Size = new System.Drawing.Size(742, 9);
             this.tblNovelList.TabIndex = 0;
             // 
             // pLoading
@@ -67,7 +69,7 @@
             this.pLoading.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pLoading.Location = new System.Drawing.Point(6, 3);
             this.pLoading.Name = "pLoading";
-            this.pLoading.Size = new System.Drawing.Size(745, 408);
+            this.pLoading.Size = new System.Drawing.Size(743, 406);
             this.pLoading.TabIndex = 0;
             this.pLoading.Visible = false;
             // 
@@ -77,7 +79,7 @@
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(745, 408);
+            this.label1.Size = new System.Drawing.Size(743, 406);
             this.label1.TabIndex = 0;
             this.label1.Text = "Loading novels, please wait...";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -88,7 +90,7 @@
             this.pEmptyLibrary.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pEmptyLibrary.Location = new System.Drawing.Point(6, 3);
             this.pEmptyLibrary.Name = "pEmptyLibrary";
-            this.pEmptyLibrary.Size = new System.Drawing.Size(745, 408);
+            this.pEmptyLibrary.Size = new System.Drawing.Size(743, 406);
             this.pEmptyLibrary.TabIndex = 1;
             // 
             // label2
@@ -97,7 +99,7 @@
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(0, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(745, 408);
+            this.label2.Size = new System.Drawing.Size(743, 406);
             this.label2.TabIndex = 0;
             this.label2.Text = "No novels added in the Library";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -120,9 +122,10 @@
             // panel1
             // 
             this.panel1.AutoScroll = true;
-            this.panel1.Controls.Add(this.tblNovelList);
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.pLoading);
             this.panel1.Controls.Add(this.pEmptyLibrary);
+            this.panel1.Controls.Add(this.tblNovelList);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
@@ -134,10 +137,12 @@
             // 
             this.tableLayoutPanel2.AutoSize = true;
             this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnCount = 3;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.Controls.Add(this.btnAddNovel, 1, 0);
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.Controls.Add(this.btnAddNovel, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.btnUpdateInfos, 1, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 420);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
@@ -151,6 +156,7 @@
             // 
             this.btnAddNovel.AutoSize = true;
             this.btnAddNovel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnAddNovel.Enabled = false;
             this.btnAddNovel.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAddNovel.Location = new System.Drawing.Point(625, 3);
             this.btnAddNovel.Name = "btnAddNovel";
@@ -159,6 +165,19 @@
             this.btnAddNovel.Text = "Add Existing Novel";
             this.btnAddNovel.UseVisualStyleBackColor = true;
             this.btnAddNovel.Click += new System.EventHandler(this.btnAddNovel_Click);
+            // 
+            // btnUpdateInfos
+            // 
+            this.btnUpdateInfos.AutoSize = true;
+            this.btnUpdateInfos.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnUpdateInfos.Enabled = false;
+            this.btnUpdateInfos.Location = new System.Drawing.Point(521, 3);
+            this.btnUpdateInfos.Name = "btnUpdateInfos";
+            this.btnUpdateInfos.Size = new System.Drawing.Size(98, 27);
+            this.btnUpdateInfos.TabIndex = 1;
+            this.btnUpdateInfos.Text = "Update Infos";
+            this.btnUpdateInfos.UseVisualStyleBackColor = true;
+            this.btnUpdateInfos.Click += new System.EventHandler(this.btnUpdateInfos_Click);
             // 
             // LibraryUserControl
             // 
@@ -191,5 +210,6 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Button btnAddNovel;
+        private System.Windows.Forms.Button btnUpdateInfos;
     }
 }

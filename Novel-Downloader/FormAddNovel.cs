@@ -6,11 +6,11 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using Core.Models.Library;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Novel_Downloader.Models.Library;
 
 namespace Novel_Downloader
 {

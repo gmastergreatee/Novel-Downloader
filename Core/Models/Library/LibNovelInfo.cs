@@ -4,13 +4,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace Novel_Downloader.Models.Library
+namespace Core.Models.Library
 {
     public class LibNovelInfo
     {
         public string URL { get; set; } = "";
         public string EpubFilePath { get; set; } = "";
         public string DataDirPath { get; set; } = "";
+        public bool CheckForUpdates { get; set; } = true;
 
         public string Title { get; set; } = "";
         public string Author { get; set; } = "";

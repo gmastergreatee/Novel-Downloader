@@ -78,7 +78,6 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Library\LibNovelInfo.cs" />
     <Compile Include="NovelUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -132,5 +131,6 @@
       <Name>Webnovel</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

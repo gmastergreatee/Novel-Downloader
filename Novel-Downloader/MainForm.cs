@@ -80,6 +80,7 @@ namespace Novel_Downloader
 
         private void OnChapterListFetchSuccess(object sender, List<ChapterInfo> e)
         {
+            OnLog(sender, "Done");
             Invoke(new Action(() =>
             {
                 progDownload.Maximum = e.Count;
@@ -334,6 +335,7 @@ namespace Novel_Downloader
             txtConsole.AppendText("Downloading..." + Environment.NewLine);
             LockControls();
             btnGrabChapters.Text = "STOP";
+            OnLog(sender, "Fetching chapter list");
             new Task(() =>
             {
                 currentDownloader.FetchChapterList();
@@ -364,6 +366,12 @@ namespace Novel_Downloader
 
         }
 
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            OnLog(sender, "Saving library...");
+            libraryUserControl1.SaveLibrary();
+        }
+
         #endregion
 
         #region Helper Methods
@@ -376,6 +384,7 @@ namespace Novel_Downloader
             folderBrowserDialog1.ShowNewFolderButton = true;
 
             pictureBox1.LoadCompleted += ImageLoaded;
+            libraryUserControl1.OnLog += OnLog;
         }
 
         string ParseExceptionMessage(Exception ex)

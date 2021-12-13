@@ -5,17 +5,19 @@ using System.Linq;
 using System.Text;
 using Core.Models;
 using System.Drawing;
+using Core.Models.Library;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Novel_Downloader.Models.Library;
 
 namespace Novel_Downloader
 {
     public partial class LibraryUserControl : UserControl
     {
-        IDownloader currentDownloader = null;
+        public event EventHandler<string> OnLog;
+        public event EventHandler<LibNovelInfo> OnUpdate;
+
         Library novelLibrary { get; set; } = null;
 
         public LibraryUserControl()
@@ -27,6 +29,16 @@ namespace Novel_Downloader
         }
 
         #region Helper Methods
+
+        public void AddToLibrary(LibNovelInfo novelInfo)
+        {
+            novelLibrary.AddNovel(novelInfo);
+        }
+
+        public void SaveLibrary()
+        {
+            novelLibrary.SaveNovels();
+        }
 
         private void SetLoading(bool value)
         {
@@ -78,6 +90,9 @@ namespace Novel_Downloader
                 {
                     SetLoading(false);
                     pEmptyLibrary.Visible = novelCount <= 0;
+
+                    btnUpdateInfos.Enabled = true;
+                    btnAddNovel.Enabled = true;
                 }));
             }).Start();
         }
@@ -108,13 +123,84 @@ namespace Novel_Downloader
             }
         }
 
+        private void btnUpdateInfos_Click(object sender, EventArgs e)
+        {
+            btnAddNovel.Enabled = false;
+            btnUpdateInfos.Enabled = false;
+            new Task(() =>
+            {
+                try
+                {
+                    var ctrlCount = 0;
+                    foreach (var ctrl in tblNovelList.Controls)
+                    {
+                        var novelCtrl = (NovelUserControl)ctrl;
+                        if (!novelCtrl.IsLocked && novelCtrl.NovelInfo.CheckForUpdates)
+                        {
+                            novelCtrl.LockControls();
+
+                            IDownloader downloader = Downloaders.GetValidDownloader(novelCtrl.NovelInfo.URL);
+                            if (downloader == null)
+                            {
+                                OnLog?.Invoke(this, $@"ERROR -> ""{novelCtrl.NovelInfo.Title}"" by ""{novelCtrl.NovelInfo.Author}"" -> No matching downloader found");
+                            }
+                            else
+                            {
+                                NovelInfo info = null;
+
+                                #region Downloader Events
+                                downloader.OnLog += (a, b) =>
+                                {
+                                    OnLog?.Invoke(a, b);
+                                };
+                                downloader.OnNovelInfoFetchSuccess += (a, b) =>
+                                {
+                                    info = b;
+                                    novelCtrl.NovelInfo.ChapterCount = info.ChapterCount;
+                                    novelCtrl.UnlockControls();
+                                    OnLog?.Invoke(sender, $"\"{novelCtrl.NovelInfo.Title}\" -> Info fetched");
+                                    ++ctrlCount;
+                                };
+                                downloader.OnNovelInfoFetchError += (a, b) =>
+                                {
+                                    OnLog?.Invoke(a, $"ERROR ->  {b.Message}");
+                                    novelCtrl.UnlockControls();
+                                    ++ctrlCount;
+                                };
+                                #endregion
+
+                                System.Threading.Thread.Sleep(2000);
+
+                                OnLog?.Invoke(sender, $"\"{novelCtrl.NovelInfo.Title}\" -> Fetching info");
+                                downloader.FetchNovelInfo(novelCtrl.NovelInfo.URL);
+                            }
+                        }
+                        else
+                        {
+                            ++ctrlCount;
+                        }
+                    }
+
+                    while (ctrlCount < tblNovelList.Controls.Count)
+                        System.Threading.Thread.Sleep(1000);
+
+                    Invoke(new Action(() =>
+                    {
+                        btnAddNovel.Enabled = true;
+                        btnUpdateInfos.Enabled = true;
+                    }));
+                }
+                catch { }
+            }).Start();
+        }
+
         #endregion
 
         #region Novel UserControl Events
 
         private void NovelUserCtrl_OnUpdateClick(object sender, LibNovelInfo e)
         {
-            throw new NotImplementedException();
+            OnUpdate?.Invoke(sender, e);
         }
 
         private void NovelUserCtrl_OnDeleteClick(object sender, LibNovelInfo e)

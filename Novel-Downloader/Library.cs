@@ -1,7 +1,7 @@
 ﻿using Core;
 using System.IO;
+using Core.Models.Library;
 using System.Collections.Generic;
-using Novel_Downloader.Models.Library;
 
 namespace Novel_Downloader
 {
@@ -28,6 +28,20 @@ namespace Novel_Downloader
                 try
                 {
                     NovelList.AddRange(JsonUtils.DeserializeJson<List<LibNovelInfo>>(content));
+                    foreach (var novelInfo in NovelList)
+                    {
+                        var dataDirPath = novelInfo.DataDirPath;
+
+                        var downloadedCount = 0;
+                        for (var i = 0; i < novelInfo.ChapterCount; i++)
+                        {
+                            if (File.Exists(Path.Combine(dataDirPath, (i + 1).ToString() + ".json")))
+                                downloadedCount++;
+                            else
+                                break;
+                        }
+                        novelInfo.DownloadedTill = downloadedCount;
+                    }
                 }
                 catch
                 {
@@ -53,7 +67,7 @@ namespace Novel_Downloader
             SaveNovels();
         }
 
-        private void SaveNovels()
+        public void SaveNovels()
         {
             File.WriteAllText(_novelListFilePath, JsonUtils.SerializeJson(NovelList));
         }
