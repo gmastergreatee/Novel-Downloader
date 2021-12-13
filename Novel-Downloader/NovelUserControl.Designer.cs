@@ -45,7 +45,9 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
+            this.btnUpdate = new System.Windows.Forms.Button();
+            this.lblUpdateText = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -67,7 +69,7 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(622, 284);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(620, 267);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // tableLayoutPanel2
@@ -85,18 +87,20 @@
             this.tableLayoutPanel2.Controls.Add(this.lblAuthor, 1, 1);
             this.tableLayoutPanel2.Controls.Add(this.lblChapterCount, 1, 2);
             this.tableLayoutPanel2.Controls.Add(this.lblDownloadedChapterCount, 1, 3);
-            this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel4, 0, 5);
+            this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel4, 0, 6);
+            this.tableLayoutPanel2.Controls.Add(this.lblUpdateText, 0, 5);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(221, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 6;
+            this.tableLayoutPanel2.RowCount = 7;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(398, 278);
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(396, 261);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // label4
@@ -149,7 +153,7 @@
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblTitle.Location = new System.Drawing.Point(95, 0);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(300, 17);
+            this.lblTitle.Size = new System.Drawing.Size(298, 17);
             this.lblTitle.TabIndex = 4;
             this.lblTitle.Text = "NA";
             // 
@@ -159,7 +163,7 @@
             this.lblAuthor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblAuthor.Location = new System.Drawing.Point(95, 17);
             this.lblAuthor.Name = "lblAuthor";
-            this.lblAuthor.Size = new System.Drawing.Size(300, 17);
+            this.lblAuthor.Size = new System.Drawing.Size(298, 17);
             this.lblAuthor.TabIndex = 5;
             this.lblAuthor.Text = "NA";
             // 
@@ -169,7 +173,7 @@
             this.lblChapterCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblChapterCount.Location = new System.Drawing.Point(95, 34);
             this.lblChapterCount.Name = "lblChapterCount";
-            this.lblChapterCount.Size = new System.Drawing.Size(300, 17);
+            this.lblChapterCount.Size = new System.Drawing.Size(298, 17);
             this.lblChapterCount.TabIndex = 6;
             this.lblChapterCount.Text = "NA";
             // 
@@ -179,7 +183,7 @@
             this.lblDownloadedChapterCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblDownloadedChapterCount.Location = new System.Drawing.Point(95, 51);
             this.lblDownloadedChapterCount.Name = "lblDownloadedChapterCount";
-            this.lblDownloadedChapterCount.Size = new System.Drawing.Size(300, 17);
+            this.lblDownloadedChapterCount.Size = new System.Drawing.Size(298, 17);
             this.lblDownloadedChapterCount.TabIndex = 7;
             this.lblDownloadedChapterCount.Text = "NA";
             // 
@@ -189,7 +193,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(212, 278);
+            this.panel2.Size = new System.Drawing.Size(212, 261);
             this.panel2.TabIndex = 1;
             // 
             // tableLayoutPanel3
@@ -202,57 +206,86 @@
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(212, 278);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(212, 261);
             this.tableLayoutPanel3.TabIndex = 0;
             // 
             // picNovelImage
             // 
-            this.picNovelImage.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.picNovelImage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picNovelImage.Location = new System.Drawing.Point(3, 3);
             this.picNovelImage.Name = "picNovelImage";
-            this.picNovelImage.Size = new System.Drawing.Size(206, 272);
+            this.picNovelImage.Size = new System.Drawing.Size(206, 255);
             this.picNovelImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picNovelImage.TabIndex = 0;
             this.picNovelImage.TabStop = false;
             // 
             // panel1
             // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.tableLayoutPanel1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(6);
-            this.panel1.Size = new System.Drawing.Size(634, 296);
+            this.panel1.Size = new System.Drawing.Size(634, 281);
             this.panel1.TabIndex = 1;
             // 
             // tableLayoutPanel4
             // 
             this.tableLayoutPanel4.AutoSize = true;
             this.tableLayoutPanel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel4.ColumnCount = 2;
+            this.tableLayoutPanel4.ColumnCount = 4;
             this.tableLayoutPanel2.SetColumnSpan(this.tableLayoutPanel4, 2);
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel4.Controls.Add(this.button1, 1, 0);
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel4.Controls.Add(this.btnDelete, 3, 0);
+            this.tableLayoutPanel4.Controls.Add(this.btnUpdate, 2, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 242);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 225);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(392, 33);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(390, 33);
             this.tableLayoutPanel4.TabIndex = 8;
             // 
-            // button1
+            // btnDelete
             // 
-            this.button1.AutoSize = true;
-            this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button1.Location = new System.Drawing.Point(330, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(59, 27);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Delete";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnDelete.AutoSize = true;
+            this.btnDelete.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnDelete.Location = new System.Drawing.Point(328, 3);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(59, 27);
+            this.btnDelete.TabIndex = 0;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
+            // btnUpdate
+            // 
+            this.btnUpdate.AutoSize = true;
+            this.btnUpdate.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnUpdate.Location = new System.Drawing.Point(258, 3);
+            this.btnUpdate.Name = "btnUpdate";
+            this.btnUpdate.Size = new System.Drawing.Size(64, 27);
+            this.btnUpdate.TabIndex = 1;
+            this.btnUpdate.Text = "Update";
+            this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            // 
+            // lblUpdateText
+            // 
+            this.lblUpdateText.AutoSize = true;
+            this.tableLayoutPanel2.SetColumnSpan(this.lblUpdateText, 2);
+            this.lblUpdateText.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblUpdateText.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblUpdateText.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.lblUpdateText.Location = new System.Drawing.Point(3, 202);
+            this.lblUpdateText.Name = "lblUpdateText";
+            this.lblUpdateText.Size = new System.Drawing.Size(390, 20);
+            this.lblUpdateText.TabIndex = 9;
+            this.lblUpdateText.Text = "10 chapters available";
             // 
             // NovelUserControl
             // 
@@ -260,7 +293,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panel1);
             this.Name = "NovelUserControl";
-            this.Size = new System.Drawing.Size(634, 296);
+            this.Size = new System.Drawing.Size(634, 281);
             this.Load += new System.EventHandler(this.NovelUserControl_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
@@ -294,6 +327,8 @@
         private System.Windows.Forms.Label lblDownloadedChapterCount;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnDelete;
+        private System.Windows.Forms.Button btnUpdate;
+        private System.Windows.Forms.Label lblUpdateText;
     }
 }

@@ -14,7 +14,11 @@ namespace Novel_Downloader
 {
     public partial class NovelUserControl : UserControl
     {
+        public event EventHandler<LibNovelInfo> OnDeleteClick;
+        public event EventHandler<LibNovelInfo> OnUpdateClick;
+
         public LibNovelInfo NovelInfo { get; private set; } = null;
+        public bool IsLocked { get; set; } = false;
 
         public NovelUserControl(LibNovelInfo novelInfo)
         {
@@ -38,6 +42,37 @@ namespace Novel_Downloader
             {
                 picNovelImage.ImageLocation = Path.Combine(NovelInfo.DataDirPath, "image.jpg");
             }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            LockControls();
+            if (MessageBox.Show($@"Do you really want to delete the novel ""{NovelInfo.Title}"" by ""{NovelInfo.Author}"" from the library ?", "Really?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                OnDeleteClick?.Invoke(this, NovelInfo);
+            }
+            UnlockControls();
+        }
+
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            LockControls();
+            OnUpdateClick?.Invoke(this, NovelInfo);
+            UnlockControls();
+        }
+
+        public void LockControls()
+        {
+            IsLocked = true;
+            btnDelete.Enabled = false;
+            btnUpdate.Enabled = false;
+        }
+
+        public void UnlockControls()
+        {
+            btnUpdate.Enabled = true;
+            btnDelete.Enabled = true;
+            IsLocked = false;
         }
     }
 }

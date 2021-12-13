@@ -62,6 +62,9 @@ namespace Novel_Downloader
                             Dock = DockStyle.Fill
                         };
 
+                        novelUserCtrl.OnDeleteClick += NovelUserCtrl_OnDeleteClick;
+                        novelUserCtrl.OnUpdateClick += NovelUserCtrl_OnUpdateClick;
+
                         Invoke(new Action(() =>
                         {
                             tblNovelList.Controls.Add(novelUserCtrl);
@@ -106,5 +109,24 @@ namespace Novel_Downloader
         }
 
         #endregion
+
+        #region Novel UserControl Events
+
+        private void NovelUserCtrl_OnUpdateClick(object sender, LibNovelInfo e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void NovelUserCtrl_OnDeleteClick(object sender, LibNovelInfo e)
+        {
+            novelLibrary.RemoveNovel(e);
+            Invoke(new Action(() =>
+            {
+                LoadLibrary(novelLibrary.NovelList);
+            }));
+        }
+
+        #endregion
+
     }
 }
