@@ -36,8 +36,12 @@ namespace Novel_Downloader
         void LoadLibrary(List<LibNovelInfo> novelInfos)
         {
             var novelCount = 0;
-            SetLoading(true);
-            tblNovelList.Controls.Clear();
+            Invoke(new Action(() =>
+            {
+                SetLoading(true);
+                tblNovelList.Controls.Clear();
+            }));
+
             new Task(() =>
             {
                 if (novelInfos != null && novelInfos.Count > 0)
@@ -53,7 +57,7 @@ namespace Novel_Downloader
 
                     foreach (var info in novelInfos)
                     {
-                        var novelUserCtrl = new NovelUserControl
+                        var novelUserCtrl = new NovelUserControl(info)
                         {
                             Dock = DockStyle.Fill
                         };
@@ -81,14 +85,24 @@ namespace Novel_Downloader
 
         private void LibraryUserControl_Load(object sender, EventArgs e)
         {
-            novelLibrary = new Library();
-            novelLibrary.Reload();
-            LoadLibrary(novelLibrary.NovelList);
+            new Task(() =>
+            {
+                novelLibrary = new Library();
+                novelLibrary.Reload();
+                LoadLibrary(novelLibrary.NovelList);
+            }).Start();
         }
 
         private void btnAddNovel_Click(object sender, EventArgs e)
         {
+            var formAddNovel = new FormAddNovel();
+            formAddNovel.ShowDialog();
 
+            if (formAddNovel.NovelInfo != null)
+            {
+                novelLibrary.AddNovel(formAddNovel.NovelInfo);
+                LoadLibrary(novelLibrary.NovelList);
+            }
         }
 
         #endregion

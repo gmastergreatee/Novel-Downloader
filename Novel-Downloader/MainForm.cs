@@ -94,6 +94,16 @@ namespace Novel_Downloader
                     OnLog(sender, "Saving image...");
                     try
                     {
+                        // saving thumb
+                        if (pictureBox1.Image != null)
+                        {
+                            var thumbLoc = Path.Combine(TargetPath, "data", "image.jpg");
+                            if (File.Exists(thumbLoc))
+                                File.Delete(thumbLoc);
+                            pictureBox1.Image.Save(thumbLoc);
+                        }
+
+                        // saving HQ cover-image
                         (new System.Net.WebClient()).DownloadFile(novelInfo.ImageUrl, Path.Combine(TargetPath, "data", "image.jpg"));
                     }
                     catch

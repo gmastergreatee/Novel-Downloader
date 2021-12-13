@@ -254,20 +254,9 @@ namespace Webnovel
             return novelUrl.ToLower().StartsWith("https://www.webnovel.com/book/");
         }
 
-        public void GenerateDocument(string targetPath, int numChapterFetched)
+        public void GenerateDocument(string targetDirPath, int numChapterFetched)
         {
             OnLog?.Invoke(this, "Generating EPUB file...");
-
-            var epubFileName = _novelInfo.Author + " - " + _novelInfo.Title + ".epub";
-            var invalidPathChars = Path.GetInvalidFileNameChars().Union(Path.GetInvalidPathChars()).ToList();
-
-            epubFileName = invalidPathChars.Aggregate(
-                epubFileName,
-                (current, ch) =>
-                    current.Replace(ch.ToString(), "")
-            );
-
-            var epubFilePath = Path.Combine(targetPath, epubFileName);
 
             var book = new EpubGenerator.Ebook()
             {
@@ -275,9 +264,9 @@ namespace Webnovel
                 Author = _novelInfo.Author,
             };
 
-            if (File.Exists(Path.Combine(targetPath, "data", "image.jpg")))
+            if (File.Exists(Path.Combine(targetDirPath, "data", "image.jpg")))
             {
-                var imageBytes = File.ReadAllBytes(Path.Combine(targetPath, "data", "image.jpg"));
+                var imageBytes = File.ReadAllBytes(Path.Combine(targetDirPath, "data", "image.jpg"));
                 var fData = new EpubGenerator.FileData()
                 {
                     FileName = "image.jpeg",
@@ -325,7 +314,9 @@ namespace Webnovel
                 OnLog?.Invoke(this, log);
             };
 
+            var epubFilePath = Path.Combine(targetDirPath, FileUtils.GetValidFileName(_novelInfo.Title, _novelInfo.Author) + ".epub");
             book.Write(epubFilePath);
+
             OnLog?.Invoke(this, "File saved to \"" + epubFilePath + "\"");
         }
 

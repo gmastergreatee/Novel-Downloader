@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileUtils.cs" />
     <Compile Include="JsonUtils.cs" />
     <Compile Include="Models\ChapterData.cs" />
     <Compile Include="Models\ChapterDataFetchError.cs" />

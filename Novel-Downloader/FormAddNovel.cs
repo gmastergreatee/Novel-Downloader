@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core;
+using System;
 using System.IO;
 using Core.Models;
 using System.Data;
@@ -17,12 +18,12 @@ namespace Novel_Downloader
     {
         private readonly string _cwd = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
 
-        LibNovelInfo info;
-        IDownloader currentDownloader;
+        public LibNovelInfo NovelInfo { get; private set; } = null;
 
         public FormAddNovel()
         {
             InitializeComponent();
+            openFileDialog1.InitialDirectory = _cwd;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -32,68 +33,59 @@ namespace Novel_Downloader
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            var url = txtURL.Text.Trim();
-            currentDownloader = Downloaders.GetValidDownloader(url);
-
-            if (currentDownloader == null)
-            {
-                MessageBox.Show("No applicable downloaders found. Please enter a valid URL.", "Oops!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            var infoJsonFile = txtDataPath.Text.Trim();
-            bool infoJsonFileError;
-            if (!File.Exists(infoJsonFile))
-            {
-                infoJsonFileError = true;
-                goto infoJsonErrorLabel;
-            }
-
-            try
-            {
-
-            }
-            catch
-            {
-                infoJsonFileError = true;
-                goto infoJsonErrorLabel;
-            }
-
-            var epubPath = txtEPUBPath.Text.Trim();
-            if (!epubPath.ToLower().EndsWith(".epub"))
-                epubPath += ".epub";
-
-            if (!File.Exists(epubPath))
-            {
-                try
-                {
-                    var dir = Path.GetDirectoryName(epubPath);
-                    if (!Directory.Exists(dir))
-                        Directory.CreateDirectory(dir);
-
-                    File.WriteAllText(epubPath, "");
-                }
-                catch
-                {
-                    MessageBox.Show("Error checking EPUB file", "Oops!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-            }
-
-            info = new LibNovelInfo()
-            {
-                URL = url,
-                DataDirPath = Path.GetDirectoryName(infoJsonFile),
-                EpubFilePath = epubPath,
-            };
-            return;
-
-        infoJsonErrorLabel:
-            if (infoJsonFileError)
+            var infoJsonFilePath = txtDataPath.Text.Trim();
+            if (!File.Exists(infoJsonFilePath))
             {
                 MessageBox.Show("Error checking info.json file", "Oops!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
+            try
+            {
+                var novelInfo = JsonUtils.DeserializeJson<NovelInfo>(File.ReadAllText(infoJsonFilePath));
+                var dataDirPath = Path.GetDirectoryName(infoJsonFilePath);
+
+                var downloadedCount = 0;
+                for (var i = 0; i < novelInfo.ChapterCount; i++)
+                {
+                    if (File.Exists(Path.Combine(dataDirPath, (i + 1).ToString() + ".json")))
+                        downloadedCount++;
+                    else
+                        break;
+                }
+
+                NovelInfo = new LibNovelInfo()
+                {
+                    URL = novelInfo.NovelUrl,
+                    DataDirPath = dataDirPath,
+                    EpubFilePath = Path.Combine(dataDirPath, FileUtils.GetValidFileName(novelInfo.Title, novelInfo.Author) + ".epub"),
+
+                    Title = novelInfo.Title,
+                    Author = novelInfo.Author,
+                    ChapterCount = novelInfo.ChapterCount,
+                    DownloadedTill = downloadedCount,
+                    Description = "",
+                };
+            }
+            catch
+            {
+                MessageBox.Show("Error checking info.json file, maybe CORRUPT", "Oops!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            Close();
+        }
+
+        private void btnSelectInfoJSONPath_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.FileName = "";
+            openFileDialog1.Title = "Select \"info.json\" file";
+            openFileDialog1.Filter = "info.json File|info.json";
+
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                txtDataPath.Text = openFileDialog1.FileName;
+            else
+                txtDataPath.Text = "";
         }
     }
 }
