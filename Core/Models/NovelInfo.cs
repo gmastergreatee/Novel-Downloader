@@ -5,6 +5,7 @@
         public string DownloaderId { get; set; }
         public string UniqueId { get; set; }
         public string NovelUrl { get; set; }
+        public string ThumbUrl { get; set; }
         public string ImageUrl { get; set; }
         public string Title { get; set; }
         public string Author { get; set; }
@@ -16,6 +17,7 @@
             {
                 UniqueId = UniqueId,
                 NovelUrl = NovelUrl,
+                ThumbUrl = ThumbUrl,
                 ImageUrl = ImageUrl,
                 Title = Title,
                 Author = Author,

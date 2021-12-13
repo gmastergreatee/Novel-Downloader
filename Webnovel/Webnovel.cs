@@ -34,6 +34,8 @@ namespace Webnovel
         public event EventHandler<ChapterData> OnChapterDataFetchSuccess;
         public event EventHandler<ChapterDataFetchError> OnChapterDataFetchError;
 
+        #region Downloading related
+
         public void FetchChapterData(ChapterInfo chapterInfo)
         {
             var chapterData = new ChapterData();
@@ -187,6 +189,7 @@ namespace Webnovel
                     #endregion
 
                     #region Get Image URL
+                    retThis.ThumbUrl = "https://img.webnovel.com/bookcover/" + retThis.UniqueId + "/150/150.jpg";
                     retThis.ImageUrl = "https://img.webnovel.com/bookcover/" + retThis.UniqueId + "/600/600.jpg";
                     #endregion
 
@@ -251,7 +254,7 @@ namespace Webnovel
             return novelUrl.ToLower().StartsWith("https://www.webnovel.com/book/");
         }
 
-        public void GenerateDocument(string targetPath)
+        public void GenerateDocument(string targetPath, int numChapterFetched)
         {
             OnLog?.Invoke(this, "Generating EPUB file...");
 
@@ -297,10 +300,14 @@ namespace Webnovel
             }
             const string cssInclude = "<link rel=\"stylesheet\" href=\"../css/style.css\" >";
 
+            var chaptersFetchedCounter = 0;
             foreach (var itm in _bookInfoResp.data.volumeItems)
             {
                 foreach (var itm2 in itm.chapterItems)
                 {
+                    if (++chaptersFetchedCounter >= numChapterFetched)
+                        break;
+
                     book.ChapterDatas.Add(new EpubGenerator.ChapterData()
                     {
                         VolumeId = itm.volumeId,
@@ -309,6 +316,8 @@ namespace Webnovel
                         ChapterContent = cssInclude + itm2.content.Replace("\r\n", "<br>").Replace("\n", "<br>"),
                     });
                 }
+                if (chaptersFetchedCounter >= numChapterFetched)
+                    break;
             }
 
             book.OnLog += (sender, log) =>
@@ -320,5 +329,11 @@ namespace Webnovel
             OnLog?.Invoke(this, "File saved to \"" + epubFilePath + "\"");
         }
 
+        #endregion
+
+        public void LoadInfo(NovelInfo asd)
+        {
+
+        }
     }
 }

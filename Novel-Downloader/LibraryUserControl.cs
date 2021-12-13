@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
+using System.IO;
 using System.Data;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.IO;
 using Core.Models;
+using System.Drawing;
+using System.Windows.Forms;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using Novel_Downloader.Models.Library;
 
 namespace Novel_Downloader
@@ -16,14 +16,17 @@ namespace Novel_Downloader
     public partial class LibraryUserControl : UserControl
     {
         IDownloader currentDownloader = null;
+        Library novelLibrary { get; set; } = null;
 
         public LibraryUserControl()
         {
             InitializeComponent();
 
             tblNovelList.RowStyles.Clear();
-            tblNovelList.RowStyles.Add(new RowStyle(SizeType.Absolute, 70));
+            tblNovelList.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         }
+
+        #region Helper Methods
 
         private void SetLoading(bool value)
         {
@@ -37,12 +40,28 @@ namespace Novel_Downloader
             tblNovelList.Controls.Clear();
             new Task(() =>
             {
-                if (novelInfos != null)
+                if (novelInfos != null && novelInfos.Count > 0)
                 {
+                    var rowCount = (novelInfos.Count / 2) + (novelInfos.Count % 2) - 1;
+                    for (var c = 0; c < rowCount; c++)
+                    {
+                        Invoke(new Action(() =>
+                        {
+                            tblNovelList.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+                        }));
+                    }
+
                     foreach (var info in novelInfos)
                     {
-                        var novelUserCtrl = new NovelUserControl();
-                        novelUserCtrl.Dock = DockStyle.Fill;
+                        var novelUserCtrl = new NovelUserControl
+                        {
+                            Dock = DockStyle.Fill
+                        };
+
+                        Invoke(new Action(() =>
+                        {
+                            tblNovelList.Controls.Add(novelUserCtrl);
+                        }));
 
                         novelCount++;
                     }
@@ -56,11 +75,22 @@ namespace Novel_Downloader
             }).Start();
         }
 
-        #region Downloader Events
-
-
-
         #endregion
 
+        #region GUI Events
+
+        private void LibraryUserControl_Load(object sender, EventArgs e)
+        {
+            novelLibrary = new Library();
+            novelLibrary.Reload();
+            LoadLibrary(novelLibrary.NovelList);
+        }
+
+        private void btnAddNovel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        #endregion
     }
 }

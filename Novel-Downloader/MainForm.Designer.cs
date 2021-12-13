@@ -30,7 +30,6 @@
         {
             this.TabMainControl = new System.Windows.Forms.TabControl();
             this.TabLibraryPage = new System.Windows.Forms.TabPage();
-            this.libraryUserControl1 = new Novel_Downloader.LibraryUserControl();
             this.TabDownloaderPage = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -56,6 +55,9 @@
             this.txtConsole = new System.Windows.Forms.TextBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.btnAddToLibrary = new System.Windows.Forms.Button();
+            this.libraryUserControl1 = new Novel_Downloader.LibraryUserControl();
             this.TabMainControl.SuspendLayout();
             this.TabLibraryPage.SuspendLayout();
             this.TabDownloaderPage.SuspendLayout();
@@ -66,6 +68,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel6.SuspendLayout();
             this.tableLayoutPanel7.SuspendLayout();
+            this.tableLayoutPanel5.SuspendLayout();
             this.SuspendLayout();
             // 
             // TabMainControl
@@ -90,14 +93,6 @@
             this.TabLibraryPage.TabIndex = 1;
             this.TabLibraryPage.Text = "Library";
             this.TabLibraryPage.UseVisualStyleBackColor = true;
-            // 
-            // libraryUserControl1
-            // 
-            this.libraryUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.libraryUserControl1.Location = new System.Drawing.Point(3, 3);
-            this.libraryUserControl1.Name = "libraryUserControl1";
-            this.libraryUserControl1.Size = new System.Drawing.Size(912, 385);
-            this.libraryUserControl1.TabIndex = 0;
             // 
             // TabDownloaderPage
             // 
@@ -179,6 +174,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSelectFolder.AutoSize = true;
             this.btnSelectFolder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnSelectFolder.Enabled = false;
             this.btnSelectFolder.Location = new System.Drawing.Point(392, 36);
             this.btnSelectFolder.Name = "btnSelectFolder";
             this.btnSelectFolder.Size = new System.Drawing.Size(57, 27);
@@ -191,6 +187,7 @@
             // 
             this.txtFolderPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFolderPath.Enabled = false;
             this.txtFolderPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtFolderPath.Location = new System.Drawing.Point(90, 36);
             this.txtFolderPath.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
@@ -268,11 +265,13 @@
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 75F));
             this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.pictureBox1, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel5, 1, 1);
             this.tableLayoutPanel3.Location = new System.Drawing.Point(458, 0);
             this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 1;
+            this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel3.Size = new System.Drawing.Size(458, 358);
             this.tableLayoutPanel3.TabIndex = 0;
             // 
@@ -389,6 +388,7 @@
             this.pictureBox1.Location = new System.Drawing.Point(0, 3);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.pictureBox1.Name = "pictureBox1";
+            this.tableLayoutPanel3.SetRowSpan(this.pictureBox1, 2);
             this.pictureBox1.Size = new System.Drawing.Size(114, 132);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 2;
@@ -471,6 +471,44 @@
             this.tableLayoutPanel7.Size = new System.Drawing.Size(949, 596);
             this.tableLayoutPanel7.TabIndex = 1;
             // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.AutoSize = true;
+            this.tableLayoutPanel5.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel5.ColumnCount = 2;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel5.Controls.Add(this.btnAddToLibrary, 1, 0);
+            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(114, 325);
+            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.RowCount = 1;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(344, 33);
+            this.tableLayoutPanel5.TabIndex = 3;
+            // 
+            // btnAddToLibrary
+            // 
+            this.btnAddToLibrary.AutoSize = true;
+            this.btnAddToLibrary.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnAddToLibrary.Location = new System.Drawing.Point(229, 3);
+            this.btnAddToLibrary.Name = "btnAddToLibrary";
+            this.btnAddToLibrary.Size = new System.Drawing.Size(112, 27);
+            this.btnAddToLibrary.TabIndex = 0;
+            this.btnAddToLibrary.Text = "Add To Library";
+            this.btnAddToLibrary.UseVisualStyleBackColor = true;
+            this.btnAddToLibrary.Visible = false;
+            this.btnAddToLibrary.Click += new System.EventHandler(this.btnAddToLibrary_Click);
+            // 
+            // libraryUserControl1
+            // 
+            this.libraryUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.libraryUserControl1.Location = new System.Drawing.Point(3, 3);
+            this.libraryUserControl1.Name = "libraryUserControl1";
+            this.libraryUserControl1.Size = new System.Drawing.Size(912, 385);
+            this.libraryUserControl1.TabIndex = 0;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -499,6 +537,8 @@
             this.tableLayoutPanel6.PerformLayout();
             this.tableLayoutPanel7.ResumeLayout(false);
             this.tableLayoutPanel7.PerformLayout();
+            this.tableLayoutPanel5.ResumeLayout(false);
+            this.tableLayoutPanel5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -534,6 +574,8 @@
         private System.Windows.Forms.TextBox txtConsole;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
         private LibraryUserControl libraryUserControl1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+        private System.Windows.Forms.Button btnAddToLibrary;
     }
 }
 

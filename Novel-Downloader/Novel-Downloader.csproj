@@ -59,6 +59,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Downloaders.cs" />
+    <Compile Include="FormAddNovel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormAddNovel.Designer.cs">
+      <DependentUpon>FormAddNovel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Library.cs" />
     <Compile Include="LibraryUserControl.cs">
       <SubType>UserControl</SubType>
@@ -81,6 +87,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FormAddNovel.resx">
+      <DependentUpon>FormAddNovel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LibraryUserControl.resx">
       <DependentUpon>LibraryUserControl.cs</DependentUpon>
     </EmbeddedResource>

@@ -21,6 +21,6 @@ namespace Core.Models
         void FetchChapterList();
         void FetchChapterData(ChapterInfo chapterInfo);
         void ResetClient();
-        void GenerateDocument(string targetPath);
+        void GenerateDocument(string targetPath, int numChapterFetched);
     }
 }

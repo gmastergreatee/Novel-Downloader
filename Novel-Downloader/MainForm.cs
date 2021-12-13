@@ -22,6 +22,7 @@ namespace Novel_Downloader
         List<ChapterData> chapterDatas { get; set; } = null;
         bool stopFetchingChapterData { get; set; } = false;
         string TargetPath { get; set; } = "";
+        bool grabbingChapters { get; set; } = false;
 
         #endregion
 
@@ -48,8 +49,8 @@ namespace Novel_Downloader
             this.novelInfo = novelInfo;
             Invoke(new Action(() =>
             {
-                if (!string.IsNullOrWhiteSpace(novelInfo.ImageUrl))
-                    pictureBox1.ImageLocation = novelInfo.ImageUrl;
+                if (!string.IsNullOrWhiteSpace(novelInfo.ThumbUrl))
+                    pictureBox1.ImageLocation = novelInfo.ThumbUrl;
 
                 lblTitle.Text = novelInfo.Title;
                 lblAuthor.Text = novelInfo.Author;
@@ -88,10 +89,17 @@ namespace Novel_Downloader
             var chapterInfosToDownload = e.ToList();
             new Task(() =>
             {
-                if (pictureBox1.Image != null)
+                if (!string.IsNullOrWhiteSpace(novelInfo.ImageUrl))
                 {
                     OnLog(sender, "Saving image...");
-                    pictureBox1.Image.Save(Path.Combine(TargetPath, "data", "image.jpg"));
+                    try
+                    {
+                        (new System.Net.WebClient()).DownloadFile(novelInfo.ImageUrl, Path.Combine(TargetPath, "data", "image.jpg"));
+                    }
+                    catch
+                    {
+                        OnLog(sender, "ERROR -> Error saving image file");
+                    }
                 }
 
                 OnLog(sender, "Saving novel-info...");
@@ -161,17 +169,24 @@ namespace Novel_Downloader
                     OnLog(sender, "Download complete");
                 else
                 {
+                    // hack for the no. of chapters fetched
+                    count += 1;
+
                     stopFetchingChapterData = false;
                     OnLog(sender, "Download stopped");
                 }
 
                 OnLog(sender, (count - 1) + " chapters fetched");
 
-                currentDownloader.GenerateDocument(TargetPath);
+                currentDownloader.GenerateDocument(TargetPath, count);
 
                 Invoke(new Action(() =>
                 {
                     UnlockControls(chapterInfosToDownload.Count <= 0);
+                    btnAddToLibrary.Visible = true;
+                    btnGrabChapters.Text = "Grab Chapters";
+                    btnGrabChapters.Enabled = true;
+                    grabbingChapters = false;
                 }));
             }).Start();
         }
@@ -183,6 +198,10 @@ namespace Novel_Downloader
             Invoke(new Action(() =>
             {
                 UnlockControls(true);
+                stopFetchingChapterData = false;
+                btnGrabChapters.Text = "Grab Chapters";
+                btnGrabChapters.Enabled = true;
+                grabbingChapters = false;
             }));
         }
 
@@ -216,7 +235,7 @@ namespace Novel_Downloader
 
         #endregion
 
-        #region UI Events
+        #region GUI Events
 
         private void btnCheck_Click(object sender, EventArgs e)
         {
@@ -284,6 +303,19 @@ namespace Novel_Downloader
 
         private void btnGrabChapters_Click(object sender, EventArgs e)
         {
+            if (stopFetchingChapterData)
+            {
+                return;
+            }
+            else if (grabbingChapters)
+            {
+                btnGrabChapters.Text = "Stopping";
+                stopFetchingChapterData = true;
+                btnGrabChapters.Enabled = false;
+                return;
+            }
+
+            grabbingChapters = true;
             ResetURLWorkspace(true);
             SetTargetPath();
             if (string.IsNullOrWhiteSpace(TargetPath))
@@ -291,6 +323,7 @@ namespace Novel_Downloader
 
             txtConsole.AppendText("Downloading..." + Environment.NewLine);
             LockControls();
+            btnGrabChapters.Text = "STOP";
             new Task(() =>
             {
                 currentDownloader.FetchChapterList();
@@ -315,7 +348,12 @@ namespace Novel_Downloader
             }
             catch { }
         }
-        
+
+        private void btnAddToLibrary_Click(object sender, EventArgs e)
+        {
+
+        }
+
         #endregion
 
         #region Helper Methods
@@ -355,6 +393,7 @@ namespace Novel_Downloader
                 lblChapterCount.Text = "NA";
                 btnGrabChapters.Enabled = false;
             }
+            btnAddToLibrary.Visible = false;
             chapterInfos = new List<ChapterInfo>();
             errorChapterInfos = new List<ChapterInfo>();
             chapterDatas = new List<ChapterData>();
@@ -373,22 +412,23 @@ namespace Novel_Downloader
         void LockControls()
         {
             btnCheck.Enabled = false;
-            btnSelectFolder.Enabled = false;
-            btnGrabChapters.Enabled = false;
 
             txtURL.Enabled = false;
-            txtFolderPath.Enabled = false;
+
+            //btnSelectFolder.Enabled = false;
+            //txtFolderPath.Enabled = false;
         }
 
         void UnlockControls(bool enableBtnGrabChapter = false)
         {
             btnCheck.Enabled = true;
-            btnSelectFolder.Enabled = true;
             if (enableBtnGrabChapter)
                 btnGrabChapters.Enabled = true;
 
             txtURL.Enabled = true;
-            txtFolderPath.Enabled = true;
+
+            //btnSelectFolder.Enabled = true;
+            //txtFolderPath.Enabled = true;
         }
 
         bool IsFullPath(string path)
@@ -430,5 +470,6 @@ namespace Novel_Downloader
         }
 
         #endregion
+
     }
 }

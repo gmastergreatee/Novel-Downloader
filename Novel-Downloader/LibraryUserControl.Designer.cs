@@ -36,7 +36,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnAddNovel = new System.Windows.Forms.Button();
             this.pLoading.SuspendLayout();
             this.pEmptyLibrary.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -46,9 +46,8 @@
             // 
             // tblNovelList
             // 
-            this.tblNovelList.ColumnCount = 3;
+            this.tblNovelList.ColumnCount = 2;
             this.tblNovelList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblNovelList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tblNovelList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblNovelList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tblNovelList.Location = new System.Drawing.Point(0, 0);
@@ -117,6 +116,7 @@
             // 
             // panel1
             // 
+            this.panel1.AutoScroll = true;
             this.panel1.Controls.Add(this.pLoading);
             this.panel1.Controls.Add(this.pEmptyLibrary);
             this.panel1.Controls.Add(this.tblNovelList);
@@ -134,7 +134,7 @@
             this.tableLayoutPanel2.ColumnCount = 2;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.Controls.Add(this.button1, 1, 0);
+            this.tableLayoutPanel2.Controls.Add(this.btnAddNovel, 1, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 417);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -143,17 +143,18 @@
             this.tableLayoutPanel2.Size = new System.Drawing.Size(757, 33);
             this.tableLayoutPanel2.TabIndex = 1;
             // 
-            // button1
+            // btnAddNovel
             // 
-            this.button1.AutoSize = true;
-            this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(619, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(135, 27);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Add Existing Novel";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnAddNovel.AutoSize = true;
+            this.btnAddNovel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnAddNovel.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAddNovel.Location = new System.Drawing.Point(619, 3);
+            this.btnAddNovel.Name = "btnAddNovel";
+            this.btnAddNovel.Size = new System.Drawing.Size(135, 27);
+            this.btnAddNovel.TabIndex = 0;
+            this.btnAddNovel.Text = "Add Existing Novel";
+            this.btnAddNovel.UseVisualStyleBackColor = true;
+            this.btnAddNovel.Click += new System.EventHandler(this.btnAddNovel_Click);
             // 
             // LibraryUserControl
             // 
@@ -162,6 +163,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "LibraryUserControl";
             this.Size = new System.Drawing.Size(763, 453);
+            this.Load += new System.EventHandler(this.LibraryUserControl_Load);
             this.pLoading.ResumeLayout(false);
             this.pEmptyLibrary.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -183,6 +185,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnAddNovel;
     }
 }
