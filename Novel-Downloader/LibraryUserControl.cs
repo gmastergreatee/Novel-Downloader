@@ -186,8 +186,7 @@ namespace Novel_Downloader
 
             if (formAddNovel.NovelInfo != null)
             {
-                novelLibrary.AddNovel(formAddNovel.NovelInfo);
-                LoadLibrary(novelLibrary.NovelList);
+                AddToLibrary(formAddNovel.NovelInfo.URL, formAddNovel.NovelInfo.DataDirPath);
             }
         }
 
