@@ -8,8 +8,8 @@ Download from [releases](https://github.com/gmastergreatee/Novel-Downloader/rele
 
 ### Features
 - [x] Downloader
-- [ ] Library (In progress)
-- [ ] Updater
+- [x] Library
+- [x] Updater
 
 ### Supported Sites
 |Sites|Status|
