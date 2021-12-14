@@ -3,11 +3,11 @@ using System;
 using System.IO;
 using System.Linq;
 using Core.Models;
+using Core.Models.Library;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Core.Models.Library;
 
 namespace Novel_Downloader
 {
@@ -55,7 +55,6 @@ namespace Novel_Downloader
                 lblAuthor.Text = novelInfo.Author;
                 lblChapterCount.Text = novelInfo.ChapterCount.ToString();
 
-                progDownload.Value = 0;
                 progDownload.Maximum = novelInfo.ChapterCount;
                 txtConsole.AppendText("---------- Novel Found ----------" + Environment.NewLine);
                 txtConsole.AppendText("Title\t\t: " + novelInfo.Title + Environment.NewLine);
@@ -209,6 +208,7 @@ namespace Novel_Downloader
             Invoke(new Action(() =>
             {
                 UnlockControls(true);
+                progDownload.Value = 0;
                 stopFetchingChapterData = false;
                 btnGrabChapters.Text = "Grab Chapters";
                 btnGrabChapters.Enabled = true;
@@ -245,7 +245,7 @@ namespace Novel_Downloader
 
         // ------------------------------- Chapter Updates
 
-        private void OnNovelUpdate(object sender, LibNovelInfo e)
+        private void OnStartDownloadNovelUpdate(object sender, LibNovelInfo e)
         {
             OnLog(sender, $"UPDATE -> \"{e.Title}\" by \"{e.Author}\"...");
 
@@ -548,7 +548,7 @@ namespace Novel_Downloader
 
         private void btnAddToLibrary_Click(object sender, EventArgs e)
         {
-
+            libraryUserControl1.AddToLibrary(novelInfo.NovelUrl, Path.Combine(TargetPath, "data"));
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -570,7 +570,15 @@ namespace Novel_Downloader
 
             pictureBox1.LoadCompleted += ImageLoaded;
             libraryUserControl1.OnLog += OnLog;
-            libraryUserControl1.OnNovelUpdate += OnNovelUpdate;
+            libraryUserControl1.OnStartDownloadNovelUpdate += OnStartDownloadNovelUpdate;
+
+            txtConsole.ContextMenu = new ContextMenu((new List<MenuItem>()
+            {
+                new MenuItem("Clear", (a, b) =>
+                {
+                    txtConsole.Clear();
+                })
+            }).ToArray());
         }
 
         string ParseExceptionMessage(Exception ex)
@@ -598,6 +606,7 @@ namespace Novel_Downloader
                 lblChapterCount.Text = "NA";
                 btnGrabChapters.Enabled = false;
             }
+            progDownload.Value = 0;
             btnAddToLibrary.Visible = false;
             errorChapterInfos = new List<ChapterInfo>();
         }
@@ -673,6 +682,5 @@ namespace Novel_Downloader
         }
 
         #endregion
-
     }
 }

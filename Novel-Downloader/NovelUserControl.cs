@@ -79,6 +79,11 @@ namespace Novel_Downloader
             }
         }
 
+        private void btnOpenFolder_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(Path.GetDirectoryName(NovelInfo.EpubFilePath));
+        }
+
         #endregion
 
         #region Helper Methods
@@ -95,6 +100,7 @@ namespace Novel_Downloader
         {
             Invoke(new Action(() =>
             {
+                panel1.BackColor = System.Drawing.SystemColors.InactiveCaption;
                 IsLocked = true;
                 btnDelete.Enabled = false;
                 btnUpdate.Enabled = false;
@@ -105,6 +111,7 @@ namespace Novel_Downloader
         {
             Invoke(new Action(() =>
             {
+                panel1.BackColor = System.Drawing.Color.Transparent;
                 btnUpdate.Enabled = true;
                 btnDelete.Enabled = true;
                 IsLocked = false;

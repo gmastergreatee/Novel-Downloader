@@ -30,7 +30,6 @@
         {
             this.TabMainControl = new System.Windows.Forms.TabControl();
             this.TabLibraryPage = new System.Windows.Forms.TabPage();
-            this.libraryUserControl1 = new Novel_Downloader.LibraryUserControl();
             this.TabDownloaderPage = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -58,6 +57,7 @@
             this.txtConsole = new System.Windows.Forms.TextBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
+            this.libraryUserControl1 = new Novel_Downloader.LibraryUserControl();
             this.TabMainControl.SuspendLayout();
             this.TabLibraryPage.SuspendLayout();
             this.TabDownloaderPage.SuspendLayout();
@@ -93,14 +93,6 @@
             this.TabLibraryPage.TabIndex = 1;
             this.TabLibraryPage.Text = "Library";
             this.TabLibraryPage.UseVisualStyleBackColor = true;
-            // 
-            // libraryUserControl1
-            // 
-            this.libraryUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.libraryUserControl1.Location = new System.Drawing.Point(3, 3);
-            this.libraryUserControl1.Name = "libraryUserControl1";
-            this.libraryUserControl1.Size = new System.Drawing.Size(1095, 385);
-            this.libraryUserControl1.TabIndex = 0;
             // 
             // TabDownloaderPage
             // 
@@ -187,6 +179,7 @@
             this.btnSelectFolder.TabIndex = 4;
             this.btnSelectFolder.Text = "...";
             this.btnSelectFolder.UseVisualStyleBackColor = true;
+            this.btnSelectFolder.Visible = false;
             this.btnSelectFolder.Click += new System.EventHandler(this.btnSelectFolder_Click);
             // 
             // txtFolderPath
@@ -201,6 +194,7 @@
             this.txtFolderPath.Size = new System.Drawing.Size(385, 26);
             this.txtFolderPath.TabIndex = 3;
             this.txtFolderPath.Text = "Novels";
+            this.txtFolderPath.Visible = false;
             // 
             // label5
             // 
@@ -216,6 +210,7 @@
             this.label5.TabIndex = 3;
             this.label5.Text = "Location :";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.label5.Visible = false;
             // 
             // btnCheck
             // 
@@ -506,6 +501,14 @@
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel7.Size = new System.Drawing.Size(1132, 596);
             this.tableLayoutPanel7.TabIndex = 1;
+            // 
+            // libraryUserControl1
+            // 
+            this.libraryUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.libraryUserControl1.Location = new System.Drawing.Point(3, 3);
+            this.libraryUserControl1.Name = "libraryUserControl1";
+            this.libraryUserControl1.Size = new System.Drawing.Size(1095, 385);
+            this.libraryUserControl1.TabIndex = 0;
             // 
             // MainForm
             // 

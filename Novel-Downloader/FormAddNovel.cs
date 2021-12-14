@@ -58,7 +58,7 @@ namespace Novel_Downloader
                 {
                     URL = novelInfo.NovelUrl,
                     DataDirPath = dataDirPath,
-                    EpubFilePath = Path.Combine(dataDirPath, FileUtils.GetValidFileName(novelInfo.Title, novelInfo.Author) + ".epub"),
+                    EpubFilePath = Path.Combine(Path.GetDirectoryName(dataDirPath), FileUtils.GetValidFileName(novelInfo.Title, novelInfo.Author) + ".epub"),
 
                     Title = novelInfo.Title,
                     Author = novelInfo.Author,

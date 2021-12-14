@@ -10,13 +10,14 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Core;
 
 namespace Novel_Downloader
 {
     public partial class LibraryUserControl : UserControl
     {
         public event EventHandler<string> OnLog;
-        public event EventHandler<LibNovelInfo> OnNovelUpdate;
+        public event EventHandler<LibNovelInfo> OnStartDownloadNovelUpdate;
 
         List<NovelUserControl> novelUserControls = null;
         Library novelLibrary { get; set; } = null;
@@ -32,10 +33,62 @@ namespace Novel_Downloader
 
         #region Helper Methods
 
-        public void AddToLibrary(LibNovelInfo novelInfo)
+        public void AddToLibrary(string url, string dataDirPath)
         {
-            novelLibrary.AddNovel(novelInfo);
-            LoadLibrary(novelLibrary.NovelList);
+            var targetControl = novelUserControls.FirstOrDefault(i => i.NovelInfo.URL == url);
+
+            var infoJsonFilePath = Path.Combine(dataDirPath, "info.json");
+            if (!File.Exists(infoJsonFilePath))
+            {
+                OnLog?.Invoke(this, "ERROR -> info.json not found");
+                return;
+            }
+
+            var nInfo = JsonUtils.DeserializeJson<NovelInfo>(File.ReadAllText(infoJsonFilePath));
+            var downloadedCount = 0;
+            for (var i = 0; i < nInfo.ChapterCount; i++)
+            {
+                if (File.Exists(Path.Combine(dataDirPath, (i + 1).ToString() + ".json")))
+                    downloadedCount++;
+                else
+                    break;
+            }
+
+            if (targetControl == null)
+            {
+                var tempNovelInfo = new LibNovelInfo()
+                {
+                    URL = nInfo.NovelUrl,
+                    DataDirPath = dataDirPath,
+                    EpubFilePath = Path.Combine(Path.GetDirectoryName(dataDirPath), FileUtils.GetValidFileName(nInfo.Title, nInfo.Author) + ".epub"),
+                    CheckForUpdates = true,
+
+                    Title = nInfo.Title,
+                    Author = nInfo.Author,
+                    ChapterCount = nInfo.ChapterCount,
+                    DownloadedTill = downloadedCount,
+                    Description = "",
+                };
+
+                novelLibrary.AddNovel(tempNovelInfo);
+                LoadLibrary(novelLibrary.NovelList);
+                OnLog?.Invoke(this, "UPDATE -> Added to Library");
+            }
+            else
+            {
+                targetControl.NovelInfo.URL = nInfo.NovelUrl;
+                targetControl.NovelInfo.DataDirPath = dataDirPath;
+                targetControl.NovelInfo.EpubFilePath = Path.Combine(Path.GetDirectoryName(dataDirPath), FileUtils.GetValidFileName(nInfo.Title, nInfo.Author) + ".epub");
+                targetControl.NovelInfo.Title = nInfo.Title;
+                targetControl.NovelInfo.Author = nInfo.Author;
+                targetControl.NovelInfo.ChapterCount = nInfo.ChapterCount;
+                targetControl.NovelInfo.DownloadedTill = downloadedCount;
+                targetControl.NovelInfo.Description = "";
+
+                targetControl.UpdateComplete();
+                novelLibrary.SaveNovels();
+                OnLog?.Invoke(this, "UPDATE -> Updated to Library");
+            }
         }
 
         public void SaveLibrary()
@@ -147,9 +200,8 @@ namespace Novel_Downloader
                 try
                 {
                     var ctrlCount = 0;
-                    foreach (var ctrl in tblNovelList.Controls)
+                    foreach (var novelCtrl in novelUserControls)
                     {
-                        var novelCtrl = (NovelUserControl)ctrl;
                         if (!novelCtrl.IsLocked && novelCtrl.NovelInfo.CheckForUpdates)
                         {
                             novelCtrl.LockControls();
@@ -172,14 +224,14 @@ namespace Novel_Downloader
                                 {
                                     info = b;
                                     novelCtrl.NovelInfo.ChapterCount = info.ChapterCount;
-                                    novelCtrl.UnlockControls();
                                     OnLog?.Invoke(sender, $"\"{novelCtrl.NovelInfo.Title}\" -> Info fetched");
+                                    novelCtrl.UpdateComplete();
                                     ++ctrlCount;
                                 };
                                 downloader.OnNovelInfoFetchError += (a, b) =>
                                 {
                                     OnLog?.Invoke(a, $"ERROR ->  {b.Message}");
-                                    novelCtrl.UnlockControls();
+                                    novelCtrl.UpdateComplete();
                                     ++ctrlCount;
                                 };
                                 #endregion
@@ -216,7 +268,7 @@ namespace Novel_Downloader
 
         private void NovelUserCtrl_OnUpdateClick(object sender, LibNovelInfo e)
         {
-            OnNovelUpdate?.Invoke(sender, e);
+            OnStartDownloadNovelUpdate?.Invoke(sender, e);
         }
 
         private void NovelUserCtrl_OnDeleteClick(object sender, LibNovelInfo e)

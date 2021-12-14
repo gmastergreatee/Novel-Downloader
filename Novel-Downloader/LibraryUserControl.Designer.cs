@@ -161,7 +161,7 @@
             this.btnAddNovel.Location = new System.Drawing.Point(625, 3);
             this.btnAddNovel.Name = "btnAddNovel";
             this.btnAddNovel.Size = new System.Drawing.Size(135, 27);
-            this.btnAddNovel.TabIndex = 0;
+            this.btnAddNovel.TabIndex = 1;
             this.btnAddNovel.Text = "Add Existing Novel";
             this.btnAddNovel.UseVisualStyleBackColor = true;
             this.btnAddNovel.Click += new System.EventHandler(this.btnAddNovel_Click);
@@ -174,7 +174,7 @@
             this.btnUpdateInfos.Location = new System.Drawing.Point(521, 3);
             this.btnUpdateInfos.Name = "btnUpdateInfos";
             this.btnUpdateInfos.Size = new System.Drawing.Size(98, 27);
-            this.btnUpdateInfos.TabIndex = 1;
+            this.btnUpdateInfos.TabIndex = 0;
             this.btnUpdateInfos.Text = "Update Infos";
             this.btnUpdateInfos.UseVisualStyleBackColor = true;
             this.btnUpdateInfos.Click += new System.EventHandler(this.btnUpdateInfos_Click);
