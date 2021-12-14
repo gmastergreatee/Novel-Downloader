@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core;
+using System;
 using System.IO;
 using System.Data;
 using System.Linq;
@@ -10,7 +11,6 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Core;
 
 namespace Novel_Downloader
 {
@@ -150,7 +150,7 @@ namespace Novel_Downloader
                     SetLoading(false);
                     pEmptyLibrary.Visible = novelCount <= 0;
 
-                    btnUpdateInfos.Enabled = true;
+                    btnUpdateInfos.Enabled = novelCount > 0;
                     btnAddNovel.Enabled = true;
                 }));
             }).Start();
@@ -253,12 +253,28 @@ namespace Novel_Downloader
                     Invoke(new Action(() =>
                     {
                         btnAddNovel.Enabled = true;
-                        btnUpdateInfos.Enabled = true;
+                        btnUpdateInfos.Enabled = novelUserControls.Count > 0;
                         OnLog?.Invoke(sender, "INFO -> All novel-info updated");
                     }));
                 }
                 catch { }
             }).Start();
+        }
+
+        private void chkNewReleasesOnly_CheckedChanged(object sender, EventArgs e)
+        {
+            foreach (var itm in novelUserControls)
+            {
+                if (chkNewReleasesOnly.Checked)
+                {
+                    if (itm.NovelInfo.ChapterCount > itm.NovelInfo.DownloadedTill)
+                        itm.ShowMe();
+                    else
+                        itm.HideMe();
+                }
+                else
+                    itm.ShowMe();
+            }
         }
 
         #endregion

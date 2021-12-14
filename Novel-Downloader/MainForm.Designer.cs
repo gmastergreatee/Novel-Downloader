@@ -30,6 +30,7 @@
         {
             this.TabMainControl = new System.Windows.Forms.TabControl();
             this.TabLibraryPage = new System.Windows.Forms.TabPage();
+            this.libraryUserControl1 = new Novel_Downloader.LibraryUserControl();
             this.TabDownloaderPage = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -57,7 +58,6 @@
             this.txtConsole = new System.Windows.Forms.TextBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
-            this.libraryUserControl1 = new Novel_Downloader.LibraryUserControl();
             this.TabMainControl.SuspendLayout();
             this.TabLibraryPage.SuspendLayout();
             this.TabDownloaderPage.SuspendLayout();
@@ -93,6 +93,14 @@
             this.TabLibraryPage.TabIndex = 1;
             this.TabLibraryPage.Text = "Library";
             this.TabLibraryPage.UseVisualStyleBackColor = true;
+            // 
+            // libraryUserControl1
+            // 
+            this.libraryUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.libraryUserControl1.Location = new System.Drawing.Point(3, 3);
+            this.libraryUserControl1.Name = "libraryUserControl1";
+            this.libraryUserControl1.Size = new System.Drawing.Size(1095, 385);
+            this.libraryUserControl1.TabIndex = 0;
             // 
             // TabDownloaderPage
             // 
@@ -502,14 +510,6 @@
             this.tableLayoutPanel7.Size = new System.Drawing.Size(1132, 596);
             this.tableLayoutPanel7.TabIndex = 1;
             // 
-            // libraryUserControl1
-            // 
-            this.libraryUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.libraryUserControl1.Location = new System.Drawing.Point(3, 3);
-            this.libraryUserControl1.Name = "libraryUserControl1";
-            this.libraryUserControl1.Size = new System.Drawing.Size(1095, 385);
-            this.libraryUserControl1.TabIndex = 0;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -518,6 +518,7 @@
             this.Controls.Add(this.tableLayoutPanel7);
             this.MinimumSize = new System.Drawing.Size(1150, 643);
             this.Name = "MainForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Novel-Downloader";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);

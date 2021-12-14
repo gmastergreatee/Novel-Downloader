@@ -7,6 +7,7 @@ using Core.Models.Library;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Novel_Downloader.Models;
 using System.Collections.Generic;
 
 namespace Novel_Downloader
@@ -14,7 +15,7 @@ namespace Novel_Downloader
     public partial class MainForm : Form
     {
         #region vars
-
+        string startupFilePath = Path.Combine(Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName), "startup.nd");
         NovelInfo novelInfo { get; set; } = null;
 
         IDownloader currentDownloader { get; set; } = null;
@@ -555,6 +556,16 @@ namespace Novel_Downloader
         {
             OnLog(sender, "Saving library...");
             libraryUserControl1.SaveLibrary();
+
+            var startup = new StartupInfo()
+            {
+                X = Left,
+                Y = Top,
+                Height = Height,
+                Width = Width,
+                WindowState = WindowState,
+            };
+            File.WriteAllText(startupFilePath, JsonUtils.SerializeJson(startup));
         }
 
         #endregion
@@ -579,6 +590,20 @@ namespace Novel_Downloader
                     txtConsole.Clear();
                 })
             }).ToArray());
+
+            if (File.Exists(startupFilePath))
+            {
+                try
+                {
+                    var startup = JsonUtils.DeserializeJson<StartupInfo>(File.ReadAllText(startupFilePath));
+                    Left = startup.X;
+                    Top = startup.Y;
+                    Height = startup.Height;
+                    Width = startup.Width;
+                    WindowState = startup.WindowState;
+                }
+                catch { }
+            }
         }
 
         string ParseExceptionMessage(Exception ex)

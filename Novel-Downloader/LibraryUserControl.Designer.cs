@@ -38,6 +38,7 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.btnAddNovel = new System.Windows.Forms.Button();
             this.btnUpdateInfos = new System.Windows.Forms.Button();
+            this.chkNewReleasesOnly = new System.Windows.Forms.CheckBox();
             this.pLoading.SuspendLayout();
             this.pEmptyLibrary.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -137,12 +138,14 @@
             // 
             this.tableLayoutPanel2.AutoSize = true;
             this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel2.ColumnCount = 3;
+            this.tableLayoutPanel2.ColumnCount = 4;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.Controls.Add(this.btnAddNovel, 2, 0);
-            this.tableLayoutPanel2.Controls.Add(this.btnUpdateInfos, 1, 0);
+            this.tableLayoutPanel2.Controls.Add(this.btnAddNovel, 3, 0);
+            this.tableLayoutPanel2.Controls.Add(this.btnUpdateInfos, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.chkNewReleasesOnly, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 420);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
@@ -179,6 +182,18 @@
             this.btnUpdateInfos.UseVisualStyleBackColor = true;
             this.btnUpdateInfos.Click += new System.EventHandler(this.btnUpdateInfos_Click);
             // 
+            // chkNewReleasesOnly
+            // 
+            this.chkNewReleasesOnly.AutoSize = true;
+            this.chkNewReleasesOnly.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chkNewReleasesOnly.Location = new System.Drawing.Point(3, 3);
+            this.chkNewReleasesOnly.Name = "chkNewReleasesOnly";
+            this.chkNewReleasesOnly.Size = new System.Drawing.Size(153, 27);
+            this.chkNewReleasesOnly.TabIndex = 2;
+            this.chkNewReleasesOnly.Text = "New Releases Only";
+            this.chkNewReleasesOnly.UseVisualStyleBackColor = true;
+            this.chkNewReleasesOnly.CheckedChanged += new System.EventHandler(this.chkNewReleasesOnly_CheckedChanged);
+            // 
             // LibraryUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -211,5 +226,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Button btnAddNovel;
         private System.Windows.Forms.Button btnUpdateInfos;
+        private System.Windows.Forms.CheckBox chkNewReleasesOnly;
     }
 }

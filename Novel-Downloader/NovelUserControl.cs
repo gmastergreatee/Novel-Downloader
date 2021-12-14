@@ -1,7 +1,11 @@
-﻿using System;
+﻿using Core;
+using System;
 using System.IO;
+using Core.Models;
 using Core.Models.Library;
 using System.Windows.Forms;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Novel_Downloader
 {
@@ -53,6 +57,43 @@ namespace Novel_Downloader
                 lblUpdateText.Text = "";
                 btnUpdate.Visible = false;
             }
+
+            new Task(() =>
+            {
+                try
+                {
+                    var notDownloaded = 0;
+                    var list = JsonUtils.DeserializeJson<List<ChapterInfo>>(File.ReadAllText(Path.Combine(NovelInfo.DataDirPath, "list.json")));
+
+                    foreach (var chap in list)
+                    {
+                        if (!File.Exists(Path.Combine(NovelInfo.DataDirPath, $"{chap.Index}.json")))
+                            notDownloaded++;
+                    }
+
+                    if (notDownloaded > 0)
+                    {
+                        NovelInfo.DownloadedTill = NovelInfo.ChapterCount - notDownloaded;
+
+                        Invoke(new Action(() =>
+                        {
+                            lblDownloadedChapterCount.Text = NovelInfo.DownloadedTill.ToString();
+
+                            if (NovelInfo.DownloadedTill != NovelInfo.ChapterCount && NovelInfo.ChapterCount > NovelInfo.DownloadedTill)
+                            {
+                                lblUpdateText.Text = (NovelInfo.ChapterCount - NovelInfo.DownloadedTill).ToString() + " chapters available";
+                                btnUpdate.Visible = true;
+                            }
+                            else
+                            {
+                                lblUpdateText.Text = "";
+                                btnUpdate.Visible = false;
+                            }
+                        }));
+                    }
+                }
+                catch { }
+            }).Start();
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
@@ -87,6 +128,7 @@ namespace Novel_Downloader
         #endregion
 
         #region Helper Methods
+
         public void UpdateComplete()
         {
             Invoke(new Action(() =>
@@ -116,6 +158,16 @@ namespace Novel_Downloader
                 btnDelete.Enabled = true;
                 IsLocked = false;
             }));
+        }
+
+        public void HideMe()
+        {
+            Visible = false;
+        }
+
+        public void ShowMe()
+        {
+            Visible = true;
         }
 
         #endregion
