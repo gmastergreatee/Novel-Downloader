@@ -18,6 +18,11 @@ namespace Core.Models
         event EventHandler<ChapterDataFetchError> OnChapterDataFetchError;
         
         bool UrlMatch(string novelUrl);
+
+        /// <summary>
+        /// Must contain non-blocking async code
+        /// </summary>
+        /// <param name="novelUrl"></param>
         void FetchNovelInfo(string novelUrl);
         void FetchChapterList();
         void FetchChapterData(ChapterInfo chapterInfo);

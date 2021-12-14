@@ -1,14 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Drawing;
 using Core.Models.Library;
 using System.Windows.Forms;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace Novel_Downloader
 {
@@ -57,6 +50,7 @@ namespace Novel_Downloader
             }
             else
             {
+                lblUpdateText.Text = "";
                 btnUpdate.Visible = false;
             }
         }
@@ -88,6 +82,14 @@ namespace Novel_Downloader
         #endregion
 
         #region Helper Methods
+        public void UpdateComplete()
+        {
+            Invoke(new Action(() =>
+            {
+                NovelUserControl_Load(this, null);
+                UnlockControls();
+            }));
+        }
 
         public void LockControls()
         {

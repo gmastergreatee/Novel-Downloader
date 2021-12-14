@@ -6,7 +6,6 @@ using AngleSharp;
 using System.Linq;
 using Core.Models;
 using AngleSharp.Dom;
-using Core.Models.Library;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -255,12 +254,15 @@ namespace Webnovel
 
         public void GenerateDocument(string targetDirPath, int numChapterFetched)
         {
+            var info = JsonUtils.DeserializeJson<NovelInfo>(File.ReadAllText(Path.Combine(targetDirPath, "data", "info.json")));
+            var list = JsonUtils.DeserializeJson<List<ChapterInfo>>(File.ReadAllText(Path.Combine(targetDirPath, "data", "list.json")));
+
             OnLog?.Invoke(this, "Generating EPUB file...");
 
             var book = new EpubGenerator.Ebook()
             {
-                Title = _novelInfo.Title,
-                Author = _novelInfo.Author,
+                Title = info.Title,
+                Author = info.Author,
             };
 
             if (File.Exists(Path.Combine(targetDirPath, "data", "image.jpg")))
@@ -289,23 +291,36 @@ namespace Webnovel
             const string cssInclude = "<link rel=\"stylesheet\" href=\"../css/style.css\" >";
 
             var chaptersFetchedCounter = 0;
-            foreach (var itm in _bookInfoResp.data.volumeItems)
+            foreach (var itm in list)
             {
-                foreach (var itm2 in itm.chapterItems)
+                var chapterDataFilePath = Path.Combine(targetDirPath, "data", itm.Index + ".json");
+                if (!File.Exists(chapterDataFilePath))
                 {
-                    if (++chaptersFetchedCounter >= numChapterFetched)
-                        break;
-
-                    book.ChapterDatas.Add(new EpubGenerator.ChapterData()
-                    {
-                        VolumeId = itm.volumeId,
-                        VolumeName = itm.volumeName,
-                        ChapterName = itm2.chapterName,
-                        ChapterContent = cssInclude + itm2.content.Replace("\r\n", "<br>").Replace("\n", "<br>"),
-                    });
+                    OnLog?.Invoke(this, $"ERROR -> Data File not found - \"{itm.Index}.json\" - \"{info.Title}\" by \"{info.Author}\"");
+                    continue;
                 }
-                if (chaptersFetchedCounter >= numChapterFetched)
+
+                ChapterData contentObj = null;
+                try
+                {
+                    contentObj = JsonUtils.DeserializeJson<ChapterData>(File.ReadAllText(chapterDataFilePath));
+                }
+                catch
+                {
+                    OnLog?.Invoke(this, $"ERROR -> Corrupt/Invalid Data File - \"{itm.Index}.json\" - \"{info.Title}\" by \"{info.Author}\"");
+                    continue;
+                }
+
+                if (++chaptersFetchedCounter >= numChapterFetched)
                     break;
+
+                book.ChapterDatas.Add(new EpubGenerator.ChapterData()
+                {
+                    VolumeId = itm.VolumeId,
+                    VolumeName = itm.VolumeName,
+                    ChapterName = itm.ChapterName,
+                    ChapterContent = cssInclude + contentObj.Content.Replace("\r\n", "<br>").Replace("\n", "<br>"),
+                });
             }
 
             book.OnLog += (sender, log) =>

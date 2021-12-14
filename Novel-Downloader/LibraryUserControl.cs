@@ -16,14 +16,16 @@ namespace Novel_Downloader
     public partial class LibraryUserControl : UserControl
     {
         public event EventHandler<string> OnLog;
-        public event EventHandler<LibNovelInfo> OnUpdate;
+        public event EventHandler<LibNovelInfo> OnNovelUpdate;
 
+        List<NovelUserControl> novelUserControls = null;
         Library novelLibrary { get; set; } = null;
 
         public LibraryUserControl()
         {
             InitializeComponent();
 
+            novelUserControls = new List<NovelUserControl>();
             tblNovelList.RowStyles.Clear();
             tblNovelList.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         }
@@ -33,6 +35,7 @@ namespace Novel_Downloader
         public void AddToLibrary(LibNovelInfo novelInfo)
         {
             novelLibrary.AddNovel(novelInfo);
+            LoadLibrary(novelLibrary.NovelList);
         }
 
         public void SaveLibrary()
@@ -53,6 +56,7 @@ namespace Novel_Downloader
                 SetLoading(true);
                 tblNovelList.Controls.Clear();
             }));
+            novelUserControls.Clear();
 
             new Task(() =>
             {
@@ -77,13 +81,15 @@ namespace Novel_Downloader
                         novelUserCtrl.OnDeleteClick += NovelUserCtrl_OnDeleteClick;
                         novelUserCtrl.OnUpdateClick += NovelUserCtrl_OnUpdateClick;
 
-                        Invoke(new Action(() =>
-                        {
-                            tblNovelList.Controls.Add(novelUserCtrl);
-                        }));
+                        novelUserControls.Add(novelUserCtrl);
 
                         novelCount++;
                     }
+
+                    Invoke(new Action(() =>
+                    {
+                        tblNovelList.Controls.AddRange(novelUserControls.ToArray());
+                    }));
                 }
 
                 Invoke(new Action(() =>
@@ -95,6 +101,15 @@ namespace Novel_Downloader
                     btnAddNovel.Enabled = true;
                 }));
             }).Start();
+        }
+
+        public void NovelUpdated(LibNovelInfo novelInfo)
+        {
+            var el = novelUserControls.FirstOrDefault(i => i.NovelInfo.URL == novelInfo.URL);
+            if (el != null)
+            {
+                el.UpdateComplete();
+            }
         }
 
         #endregion
@@ -169,10 +184,10 @@ namespace Novel_Downloader
                                 };
                                 #endregion
 
-                                System.Threading.Thread.Sleep(2000);
-
-                                OnLog?.Invoke(sender, $"\"{novelCtrl.NovelInfo.Title}\" -> Fetching info");
+                                OnLog?.Invoke(sender, $"\"{novelCtrl.NovelInfo.Title}\" -> Updating info");
                                 downloader.FetchNovelInfo(novelCtrl.NovelInfo.URL);
+
+                                System.Threading.Thread.Sleep(2000);
                             }
                         }
                         else
@@ -188,6 +203,7 @@ namespace Novel_Downloader
                     {
                         btnAddNovel.Enabled = true;
                         btnUpdateInfos.Enabled = true;
+                        OnLog?.Invoke(sender, "INFO -> All novel-info updated");
                     }));
                 }
                 catch { }
@@ -200,7 +216,7 @@ namespace Novel_Downloader
 
         private void NovelUserCtrl_OnUpdateClick(object sender, LibNovelInfo e)
         {
-            OnUpdate?.Invoke(sender, e);
+            OnNovelUpdate?.Invoke(sender, e);
         }
 
         private void NovelUserCtrl_OnDeleteClick(object sender, LibNovelInfo e)

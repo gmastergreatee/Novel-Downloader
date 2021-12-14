@@ -155,7 +155,7 @@ namespace EpubGenerator
             foreach (var itm in allJS)
             {
                 File.WriteAllBytes(Path.Combine(jsPath, itm.FileName), itm.FileBytes);
-                manifest += "\n\t\t<item id=\"css" + count + "\" href=\"css/" + itm.FileName + "\" media-type=\"text/javascript\" />";
+                manifest += "\n\t\t<item id=\"js" + count + "\" href=\"js/" + itm.FileName + "\" media-type=\"text/javascript\" />";
                 count++;
             }
 
