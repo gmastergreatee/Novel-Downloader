@@ -324,7 +324,8 @@ namespace Novel_Downloader
                             }
                         }
 
-                        if (e.ChapterCount < tempNovelInfo.ChapterCount)
+                        var info = JsonUtils.DeserializeJson<NovelInfo>(File.ReadAllText(Path.Combine(targetPath, "data", "info.json")));
+                        if (info.ChapterCount < tempNovelInfo.ChapterCount)
                         {
                             e.ChapterCount = tempNovelInfo.ChapterCount;
                             OnLog(a, "Saving novel-info...");
@@ -337,7 +338,11 @@ namespace Novel_Downloader
                                 OnLog(a, "ERROR -> Error writing novel-info");
                                 return;
                             }
+                        }
 
+                        var list = JsonUtils.DeserializeJson<List<ChapterInfo>>(File.ReadAllText(Path.Combine(targetPath, "data", "list.json")));
+                        if (list.Count() < tempNovelInfo.ChapterCount)
+                        {
                             OnLog(a, "Saving chapter-list...");
                             try
                             {
