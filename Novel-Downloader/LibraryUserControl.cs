@@ -152,6 +152,8 @@ namespace Novel_Downloader
 
                     btnUpdateInfos.Enabled = novelCount > 0;
                     btnAddNovel.Enabled = true;
+
+                    ReloadNovelDisplay();
                 }));
             }).Start();
         }
@@ -162,6 +164,22 @@ namespace Novel_Downloader
             if (el != null)
             {
                 el.UpdateComplete();
+            }
+        }
+
+        private void ReloadNovelDisplay()
+        {
+            var visibleNovelControls = (from x in novelUserControls
+                                        where (chkNewReleasesOnly.Checked ? x.NovelInfo.ChapterCount > x.NovelInfo.DownloadedTill : true) &&
+                                        (chkActiveOnly.Checked ? x.NovelInfo.CheckForUpdates : true)
+                                        select x);
+
+            foreach (var itm in novelUserControls)
+            {
+                if (visibleNovelControls.Contains(itm))
+                    itm.Visible = true;
+                else
+                    itm.Visible = false;
             }
         }
 
@@ -263,18 +281,12 @@ namespace Novel_Downloader
 
         private void chkNewReleasesOnly_CheckedChanged(object sender, EventArgs e)
         {
-            foreach (var itm in novelUserControls)
-            {
-                if (chkNewReleasesOnly.Checked)
-                {
-                    if (itm.NovelInfo.ChapterCount > itm.NovelInfo.DownloadedTill)
-                        itm.ShowMe();
-                    else
-                        itm.HideMe();
-                }
-                else
-                    itm.ShowMe();
-            }
+            ReloadNovelDisplay();
+        }
+
+        private void chkActiveOnly_CheckedChanged(object sender, EventArgs e)
+        {
+            ReloadNovelDisplay();
         }
 
         #endregion

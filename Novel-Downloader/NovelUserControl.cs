@@ -160,16 +160,6 @@ namespace Novel_Downloader
             }));
         }
 
-        public void HideMe()
-        {
-            Visible = false;
-        }
-
-        public void ShowMe()
-        {
-            Visible = true;
-        }
-
         #endregion
 
     }

@@ -2,6 +2,7 @@
 using System.IO;
 using Core.Models.Library;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Novel_Downloader
 {
@@ -27,7 +28,7 @@ namespace Novel_Downloader
                 var content = File.ReadAllText(_novelListFilePath);
                 try
                 {
-                    NovelList.AddRange(JsonUtils.DeserializeJson<List<LibNovelInfo>>(content));
+                    NovelList.AddRange(JsonUtils.DeserializeJson<List<LibNovelInfo>>(content).OrderBy(i => !i.CheckForUpdates));
                     foreach (var novelInfo in NovelList)
                     {
                         var dataDirPath = novelInfo.DataDirPath;

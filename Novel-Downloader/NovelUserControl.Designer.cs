@@ -40,16 +40,16 @@
             this.lblChapterCount = new System.Windows.Forms.Label();
             this.lblDownloadedChapterCount = new System.Windows.Forms.Label();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.btnDelete = new System.Windows.Forms.Button();
+            this.btnUpdate = new System.Windows.Forms.Button();
             this.chkUpdates = new System.Windows.Forms.CheckBox();
+            this.btnOpenFolder = new System.Windows.Forms.Button();
             this.lblUpdateText = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.picNovelImage = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnUpdate = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
-            this.btnOpenFolder = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
@@ -212,6 +212,32 @@
             this.tableLayoutPanel4.Size = new System.Drawing.Size(390, 33);
             this.tableLayoutPanel4.TabIndex = 8;
             // 
+            // btnDelete
+            // 
+            this.btnDelete.AutoSize = true;
+            this.btnDelete.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnDelete.Location = new System.Drawing.Point(360, 3);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(27, 27);
+            this.btnDelete.TabIndex = 3;
+            this.btnDelete.Text = "X";
+            this.toolTip1.SetToolTip(this.btnDelete, "Delete");
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
+            // btnUpdate
+            // 
+            this.btnUpdate.AutoSize = true;
+            this.btnUpdate.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnUpdate.Location = new System.Drawing.Point(329, 3);
+            this.btnUpdate.Name = "btnUpdate";
+            this.btnUpdate.Size = new System.Drawing.Size(25, 27);
+            this.btnUpdate.TabIndex = 2;
+            this.btnUpdate.Text = "↓";
+            this.toolTip1.SetToolTip(this.btnUpdate, "Download");
+            this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            // 
             // chkUpdates
             // 
             this.chkUpdates.AutoSize = true;
@@ -220,12 +246,25 @@
             this.chkUpdates.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chkUpdates.Location = new System.Drawing.Point(3, 3);
             this.chkUpdates.Name = "chkUpdates";
-            this.chkUpdates.Size = new System.Drawing.Size(126, 27);
+            this.chkUpdates.Size = new System.Drawing.Size(76, 27);
             this.chkUpdates.TabIndex = 0;
-            this.chkUpdates.Text = "Check Updates";
+            this.chkUpdates.Text = "Update";
             this.toolTip1.SetToolTip(this.chkUpdates, "Whether to check for novel updates or not");
             this.chkUpdates.UseVisualStyleBackColor = true;
             this.chkUpdates.CheckedChanged += new System.EventHandler(this.chkUpdates_CheckedChanged);
+            // 
+            // btnOpenFolder
+            // 
+            this.btnOpenFolder.AutoSize = true;
+            this.btnOpenFolder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnOpenFolder.Location = new System.Drawing.Point(297, 3);
+            this.btnOpenFolder.Name = "btnOpenFolder";
+            this.btnOpenFolder.Size = new System.Drawing.Size(26, 27);
+            this.btnOpenFolder.TabIndex = 1;
+            this.btnOpenFolder.Text = "F";
+            this.toolTip1.SetToolTip(this.btnOpenFolder, "Open EBUB Folder");
+            this.btnOpenFolder.UseVisualStyleBackColor = true;
+            this.btnOpenFolder.Click += new System.EventHandler(this.btnOpenFolder_Click);
             // 
             // lblUpdateText
             // 
@@ -281,45 +320,6 @@
             this.panel1.Padding = new System.Windows.Forms.Padding(6);
             this.panel1.Size = new System.Drawing.Size(634, 281);
             this.panel1.TabIndex = 1;
-            // 
-            // btnUpdate
-            // 
-            this.btnUpdate.AutoSize = true;
-            this.btnUpdate.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnUpdate.Location = new System.Drawing.Point(329, 3);
-            this.btnUpdate.Name = "btnUpdate";
-            this.btnUpdate.Size = new System.Drawing.Size(25, 27);
-            this.btnUpdate.TabIndex = 2;
-            this.btnUpdate.Text = "↓";
-            this.toolTip1.SetToolTip(this.btnUpdate, "Download");
-            this.btnUpdate.UseVisualStyleBackColor = true;
-            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
-            // 
-            // btnDelete
-            // 
-            this.btnDelete.AutoSize = true;
-            this.btnDelete.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnDelete.Location = new System.Drawing.Point(360, 3);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(27, 27);
-            this.btnDelete.TabIndex = 3;
-            this.btnDelete.Text = "X";
-            this.toolTip1.SetToolTip(this.btnDelete, "Delete");
-            this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-            // 
-            // btnOpenFolder
-            // 
-            this.btnOpenFolder.AutoSize = true;
-            this.btnOpenFolder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnOpenFolder.Location = new System.Drawing.Point(297, 3);
-            this.btnOpenFolder.Name = "btnOpenFolder";
-            this.btnOpenFolder.Size = new System.Drawing.Size(26, 27);
-            this.btnOpenFolder.TabIndex = 1;
-            this.btnOpenFolder.Text = "F";
-            this.toolTip1.SetToolTip(this.btnOpenFolder, "Open EBUB Folder");
-            this.btnOpenFolder.UseVisualStyleBackColor = true;
-            this.btnOpenFolder.Click += new System.EventHandler(this.btnOpenFolder_Click);
             // 
             // NovelUserControl
             // 
