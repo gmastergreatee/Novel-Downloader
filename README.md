@@ -15,4 +15,4 @@ Download from [releases](https://github.com/gmastergreatee/Novel-Downloader/rele
 |Sites|Status|
 |-----|------|
 |WebNovel.com|Done|
-|FanFiction.net|In progress|
+|FanFiction.net|Planned|
