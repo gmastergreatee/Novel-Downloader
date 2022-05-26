@@ -14,5 +14,5 @@ Download from [releases](https://github.com/gmastergreatee/Novel-Downloader/rele
 ### Supported Sites
 |Sites|Status|
 |-----|------|
-|WebNovel.com|Done|
+|WebNovel.com|Fixing|
 |FanFiction.net|Planned|
